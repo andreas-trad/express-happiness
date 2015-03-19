@@ -1,0 +1,21 @@
+{
+  "name": "express-happiness",
+  "version": "0.0.0",
+  "description": "Express framework wrapper",
+  "main": "expressHappiness.js",
+  "scripts": {
+    "test": "echo "Error: no test specified" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/brentertz/scapegoat.git"
+  },
+  "keywords": [
+    "express"
+  ],
+  "author": "Andreas Trantidis <atrantidis@gmail.com>",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/brentertz/scapegoat/issues"
+  }
+}
