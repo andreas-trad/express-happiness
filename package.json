@@ -4,11 +4,17 @@
   "description": "Express framework wrapper",
   "main": "expressHappiness.js",
   "scripts": {
-    "test": "echo "Error: no test specified" && exit 1"
+    "test": "echo 'Error: no test specified' && exit 1"
+  },
+  "dependencies" : {
+    "validator" : "^3.34.0"
+  , "colors" : "^1.0.3"
+  , "moment" : "^2.9.0"
+  , "underscore":"^1.8.2"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/brentertz/scapegoat.git"
+    "url": "git://github.com/andreas-trad/express-happiness.git"
   },
   "keywords": [
     "express"
@@ -16,6 +22,6 @@
   "author": "Andreas Trantidis <atrantidis@gmail.com>",
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/brentertz/scapegoat/issues"
+    "url": "https://github.com/andreas-trad/express-happiness/issues"
   }
 }

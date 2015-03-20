@@ -6,7 +6,8 @@ var kpis
 var fs = require('fs');
 var colors = require('colors');
 var flatSignature = [];
-var app, router;
+var app, router, confObj;
+var _mockOperations = {};
 
 
 var eh = function(p_app, p_router, conf){
@@ -16,7 +17,7 @@ var eh = function(p_app, p_router, conf){
     var appDir = path.dirname(require.main.filename);
     this.generate = successGenerate;
 
-    var confObj = {
+    confObj = {
         mockData:{
             enable: false,
             folder: appDir + '/mockJSONs'
@@ -43,6 +44,8 @@ var eh = function(p_app, p_router, conf){
         errorOccurred = true;
         var msg = "Configuration file (" + confObj.configurationFile + ") does not exist. Please create it according the documentation";
         console.log(msg.red.bgWhite);
+    } else {
+        _mockOperations = require(confObj.configurationFile).conf.mockOperations;
     }
     if(!fs.existsSync(confObj.reusableFieldsFile)){
         errorOccurred = true;
@@ -78,10 +81,8 @@ var eh = function(p_app, p_router, conf){
     if(errorOccurred){
         this.generate = failureGenerate;
     } else {
-        registerErrors(app, confObj.errorsConfigurationFile, confObj.errorFile);
-
         // Rest validation initialization
-        var FL = require('../controllers/fieldsLoader.js');
+        var FL = require('./fieldsLoader.js');
         var fieldsLoader = new FL(confObj.reusableFieldsFile);
         restConf = require(confObj.apiConfigurationFile).conf(fieldsLoader);
 
@@ -89,7 +90,7 @@ var eh = function(p_app, p_router, conf){
             confObj: confObj
         };
         // TODO change the folder
-        rcv = require('../controllers/RESTcallsValidator.js');
+        rcv = require('./RESTcallsValidator.js');
         rcv.init(confObj);
         rcv.assignConf(restConf);
         kpis = require(confObj.controllersFile);
@@ -122,13 +123,13 @@ var eh = function(p_app, p_router, conf){
  'userAccess':[middlewareName1, middleware2],
  'adminAccess':[middlewareName3, middleware4]
  ]
- if we want to apply a middleware to all of the routes, no matter what then we can define this by including it on the key "shoppertrak_allRoutes".
+ if we want to apply a middleware to all of the routes, no matter what then we can define this by including it on the key "eh-allRoutes".
  Example:
  preValidationMiddlewares ~=
  [
  'groupNameOne':[middlewareName1, middleware2],
  'groupNameTwo':[middlewareName3, middleware4],
- 'shoppertrak_allRoutes':[middlewareToBeAppliedToAllRoutes1, middlewareToBeAppliedToAllRoutes2]
+ 'eh-allRoutes':[middlewareToBeAppliedToAllRoutes1, middlewareToBeAppliedToAllRoutes2]
  ]
  @ postValidationMiddlewares [array][array]: holds all the middlewares that should be applied after the validation process and before the controller function invocation
  it is an associative array. On restConf.js file each route might belong to one or more groups. For each group there might be different middlewares applied.
@@ -139,13 +140,13 @@ var eh = function(p_app, p_router, conf){
  'groupNameOne':[middlewareName1, middleware2],
  'groupNameTwo':[middlewareName3, middleware4]
  ]
- if we want to apply a middleware to all of the routes, no matter what then we can define this by including it on the key "shoppertrak_allRoutes".
+ if we want to apply a middleware to all of the routes, no matter what then we can define this by including it on the key "eh-allRoutes".
  Example:
  postValidationMiddlewares ~=
  [
  'groupNameOne':[middlewareName1, middleware2],
  'groupNameTwo':[middlewareName3, middleware4],
- 'shoppertrak_allRoutes':[middlewareToBeAppliedToAllRoutes1, middlewareToBeAppliedToAllRoutes2]
+ 'eh-allRoutes':[middlewareToBeAppliedToAllRoutes1, middlewareToBeAppliedToAllRoutes2]
  ]
  */
 var successGenerate = function(baseUrl, preValidationMiddlewares, postValidationMiddlewares){
@@ -160,7 +161,17 @@ var successGenerate = function(baseUrl, preValidationMiddlewares, postValidation
         theRoute.all(preValidationMiddlewares[i]);
     }
     theRoute.get(function(req, res){
-        res.render('null', {layout:'views/index', signature:flatSignature});
+        var fs = require('fs');
+        fs.readFile(__dirname + '/views/index.html', { 'encoding':'utf8'}, function(err, data){
+            if(err){
+                console.log(err);
+            } else {
+                var _ = require('underscore');
+                var template = _.template(data);
+                res.send(template({signature:flatSignature}));
+            }
+        });
+        //res.render('null', {layout:'./index', signature:flatSignature});
     });
 
 
@@ -169,6 +180,7 @@ var successGenerate = function(baseUrl, preValidationMiddlewares, postValidation
     };
 
     generateNodeRoutes(routeObject, '', [], router, baseUrl, preValidationMiddlewares, postValidationMiddlewares, []);
+    registerErrors(app, confObj.errorsConfigurationFile, confObj.errorFile);
 };
 
 var failureGenerate = function(){
@@ -201,9 +213,9 @@ var generateNodeRoutes = function(node, nodeName, path, router, baseUrl, preVali
             theRoute[supportedTypes[k]](putMethodsOnReq(supportedTypes[k]));
             theRoute[supportedTypes[k]](putApipathToReq(path, nodeName));
 
-            if(preValidationMiddlewares.hasOwnProperty('shoppertrak_allRoutes')){
-                for(var ii=0; ii<preValidationMiddlewares['shoppertrak_allRoutes'].length; ii++){
-                    theRoute[supportedTypes[k]](preValidationMiddlewares['shoppertrak_allRoutes'][ii]);
+            if(preValidationMiddlewares.hasOwnProperty('eh-allRoutes')){
+                for(var ii=0; ii<preValidationMiddlewares['eh-allRoutes'].length; ii++){
+                    theRoute[supportedTypes[k]](preValidationMiddlewares['eh-allRoutes'][ii]);
                 }
             }
             for(var i=0; i<inheritedGroups.length; i++){
@@ -219,9 +231,9 @@ var generateNodeRoutes = function(node, nodeName, path, router, baseUrl, preVali
             theRoute[supportedTypes[k]](mockMiddlewareApplied);
 
             if(postValidationMiddlewares){
-                if(postValidationMiddlewares.hasOwnProperty('shoppertrak_allRoutes')){
-                    for(var ii=0; ii<postValidationMiddlewares['shoppertrak_allRoutes'].length; ii++){
-                        theRoute[supportedTypes[k]](postValidationMiddlewares['shoppertrak_allRoutes'][ii]);
+                if(postValidationMiddlewares.hasOwnProperty('eh-allRoutes')){
+                    for(var ii=0; ii<postValidationMiddlewares['eh-allRoutes'].length; ii++){
+                        theRoute[supportedTypes[k]](postValidationMiddlewares['eh-allRoutes'][ii]);
                     }
                 }
                 for(var i=0; i<inheritedGroups.length; i++){
@@ -253,6 +265,8 @@ var generateNodeRoutes = function(node, nodeName, path, router, baseUrl, preVali
             }
         }
     }
+
+    app.use('', router);
 }
 
 
@@ -332,7 +346,7 @@ var getSetter = function(req){
 
 
 var noControlMethodCallback = function(req, res, next){
-    var err = new Error();
+    var err = new Error("Under Development");
     err.type = 'underDevelopment';
     return next(err);
 }
@@ -349,7 +363,7 @@ var putApipathToReq = function(path, nodeName){
 
 
 var mockMiddlewareApplied = function(req, res, next){
-    if((req.expressHappiness.get('mock') != 1 && !GLOBAL._mockOperations[req.expressHappiness.apiMethod + ':' + req.route.path]) || !global.expressHappiness.confObj.mockData.enable){
+    if((req.expressHappiness.get('mock') != 1 && !_mockOperations[req.expressHappiness.apiMethod + ':' + req.route.path]) || !global.expressHappiness.confObj.mockData.enable){
         return next();
     } else {
         req.expressHappiness.mockQuery(function(results){
@@ -373,7 +387,7 @@ var registerErrors = function(app, errorsConfigurationFile, errorFile){
         humanReadable: 'Invalid attributes passed',
         sendToClient: {
             code:400,
-            data:err.details
+            data:'err.details'
         }
     };
 
@@ -419,11 +433,11 @@ var registerErrors = function(app, errorsConfigurationFile, errorFile){
         errors.underDevelopment = underDevelopment;
     };
 
-    var ErrorHandlerModule = require('../controllers/ErrorHandler.js');
+    var ErrorHandlerModule = require('./ErrorHandler.js');
     var ErrorHanlder = new ErrorHandlerModule(errorFile);
     app.use(function (err, req, res, next) {
         if(errors.hasOwnProperty(err.type)){
-            ErrorHanlder.handleError(errors[type], err, req, res);
+            ErrorHanlder.handleError(errors[err.type], err, req, res);
         } else {
             ErrorHanlder.handleError(errors.undefinedError, err, req, res);
         }

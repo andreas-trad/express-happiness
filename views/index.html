@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>KPIS documentation</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body role="document">
+<div class="container theme-showcase" role="main">
+
+    <% _.each(signature, function(item){ %>
+    <div class="page-header">
+        <h1><%= item.type.toUpperCase() %> <%= item.path %></h1>
+    </div>
+
+    <div class="well">
+        <p><%= item.node.description %></p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Parameters</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Mandatory</th>
+                    <th>Extra Info</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% _.each(item.node.fields, function(field){ %>
+                <tr>
+                    <td><%= field.key %></td>
+                    <td><%= field.type %></td>
+                    <td><%= field.description %></td>
+                    <td><% if(field.mandatory){ %>Yes<% } else { %>No<% } %></td>
+                    <td>
+                        <% if(field.type == 'oneof'){ %>Must be one of: <%= field.acceptedValues.join(', ') %><% } %>
+                        <% if(field.type == 'date'){ %>Accepted date format: <%= field.validationString %><% } %>
+                        <% if(field.type == 'string' && !!field.minChars){ %>Must be at least <%= field.minChars %> characters long <% } %>
+                        <% if(field.type == 'string' && !!field.maxChars){ %>Must be at max <%= field.maxChars %> characters long <% } %>
+                    </td>
+                </tr>
+                <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <% }); %>
+
+</div> <!-- /container -->
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,15 +1,14 @@
 var ErrorHandler = function(logfileUrl){
-    var logfile = require(logfileUrl);
     var fs = require('fs');
     var moment = require('moment');
 
     this.handleError = function(erObj, err, req, res){
         var toAppend = '\n' + moment().format('YYYY-MM-DD HH:mm:ss') + " | " + err.type + " | " + req.expressHappiness.apipath + ' | ' + erObj.humanReadable;
         if(err.details){
-            toAppend += ' | ' + JSON.stringify(details);
+            toAppend += ' | ' + JSON.stringify(err.details);
         }
 
-        fs.appendFile(logfile, toAppend, function (er) {
+        fs.appendFile(logfileUrl, toAppend, function (er) {
         });
 
         if(erObj.hooks != null && erObj.hooks != undefined){
@@ -18,7 +17,7 @@ var ErrorHandler = function(logfileUrl){
             }
         }
 
-        res.send(erObj.sendToClient.code || 200, erObj.sendToClient.data || '');
+        res.status(erObj.sendToClient.code || 200).send(erObj.sendToClient.data || '');
     };
 }
 
