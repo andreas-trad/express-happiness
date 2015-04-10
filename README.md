@@ -4,10 +4,10 @@
 <h2>Intro</h2>
 ExpressHappiness is a reach framework for creating web apps and services, built on top of 
 <a href="http://expressjs.com/" target="_blank">express framework</a>.<br/>
-We all use and love express. When it comes to large and demanding complex, some times the 
-maintainability of our apps becomes hard as we keep on adding routes, handle errors and permissions.<br/>
-ExpressHappiness provides a way that gives the developers the ability to develop robust and maintainable apps or REST APIs using express,
-as it is:
+We all use and love express. When it comes to large and complex apps, some times the 
+maintainability of them becomes hard as we keep on adding routes, handle errors and permissions.<br/>
+ExpressHappiness provides a way that provides the developers the ability to develop robust and maintainable apps or REST APIs using express.<br/>
+The main features of the framework are the above:
 <ul>
 <li>the full routes tree is defined in a single object, in a JSON-like manner</li>
 <li>error handling is defined in the exact same manner in a single file. You can either define your own error codes, define the way that they'll be handled on the errors configuration file
