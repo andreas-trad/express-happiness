@@ -21,4 +21,7 @@ The main features of the framework are the above:
 <li>and many more...</li>
 </ul>
 
-<h2>Getting started</h2>
+<h2>Install</h2>
+<code>
+npm install express-happiness
+</code>
