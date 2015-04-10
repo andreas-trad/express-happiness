@@ -3,13 +3,21 @@ var ErrorHandler = function(logfileUrl){
     var moment = require('moment');
 
     this.handleError = function(erObj, err, req, res){
-        var toAppend = '\n' + moment().format('YYYY-MM-DD HH:mm:ss') + " | " + err.type + " | " + req.expressHappiness.apipath + ' | ' + erObj.humanReadable;
+        var apipath = '';
+        if(req.expressHappiness){
+            apipath = req.expressHappiness.apipath;
+        }
+
+        var toAppend = '\n' + moment().format('YYYY-MM-DD HH:mm:ss') + " | " + err.type + " | " + apipath + ' | ' + erObj.humanReadable;
         if(err.details){
             toAppend += ' | ' + JSON.stringify(err.details);
         }
 
-        fs.appendFile(logfileUrl, toAppend, function (er) {
-        });
+        if(erObj.log){
+            fs.appendFile(logfileUrl, toAppend, function (er) {
+            });
+        }
+
 
         if(erObj.hooks != null && erObj.hooks != undefined){
             for(var i=0; i<erObj.hooks.length; i++){
@@ -17,6 +25,13 @@ var ErrorHandler = function(logfileUrl){
             }
         }
 
+        if(erObj.sendToClient){
+            if(erObj.sendToClient.data){
+                if(erObj.sendToClient.data === 'err.details'){
+                    erObj.sendToClient.data = err.details;
+                }
+            }
+        }
         res.status(erObj.sendToClient.code || 200).send(erObj.sendToClient.data || '');
     };
 }

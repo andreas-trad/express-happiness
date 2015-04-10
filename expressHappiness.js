@@ -96,8 +96,43 @@ var eh = function(p_app, p_router, conf){
         kpis = require(confObj.controllersFile);
     }
 
+    this.start = function(port){
+        if(!port){
+            var msg = "Please enter the port number for the app to run. Exiting.";
+            console.log(msg.red.bgWhite);
+            process.exit(1);
+        } else {
+            isPortTaken(port, function(err, taken){
+                if(taken) {
+                    var msg = 'Port ' + port + ' is been used by another application. Exiting.';
+                    console.log(msg.red.bgWhite);
+                    process.exit(1);
+                } else {
+                    p_app.listen(port);
+                    var msg = 'The application is listening on port ' + port + ' for connections.';
+                    console.log(msg.green);
+                }
+            });
+        }
+    }
 
+}
 
+/*
+checks if the port is taken
+ */
+var isPortTaken = function(port, fn) {
+    var net = require('net')
+    var tester = net.createServer()
+        .once('error', function (err) {
+            if (err.code != 'EADDRINUSE') return fn(err)
+            fn(null, true)
+        })
+        .once('listening', function() {
+            tester.once('close', function() { fn(null, false) })
+                .close()
+        })
+        .listen(port)
 }
 
 
@@ -198,7 +233,7 @@ var generateNodeRoutes = function(node, nodeName, path, router, baseUrl, preVali
 
     for(var k=0; k<supportedTypes.length; k++){
         if(node.hasOwnProperty(supportedTypes[k])){
-            if(node[supportedTypes[k].hasOwnProperty('groups')]){
+            if(node[supportedTypes[k]].hasOwnProperty('groups')){
                 inheritedGroups = node[supportedTypes[k]].groups;
             }
             flatSignature.push({
@@ -207,11 +242,11 @@ var generateNodeRoutes = function(node, nodeName, path, router, baseUrl, preVali
                 path:baseUrl + path.join('/') + '/' + nodeName
             });
 
-            var mockQueryMiddleware = mockQueryGenerationMiddleWare(supportedTypes[k], path, nodeName);
+            var mockQueryMiddleware = mockQueryGenerationMiddleWare(supportedTypes[k], path, nodeName, node[supportedTypes[k]].alias);
 
             var theRoute = router.route(baseUrl + path.join('/') + '/' + nodeName);
             theRoute[supportedTypes[k]](putMethodsOnReq(supportedTypes[k]));
-            theRoute[supportedTypes[k]](putApipathToReq(path, nodeName));
+            theRoute[supportedTypes[k]](putApipathToReq(path, nodeName, node[supportedTypes[k]].alias));
 
             if(preValidationMiddlewares.hasOwnProperty('eh-allRoutes')){
                 for(var ii=0; ii<preValidationMiddlewares['eh-allRoutes'].length; ii++){
@@ -244,13 +279,25 @@ var generateNodeRoutes = function(node, nodeName, path, router, baseUrl, preVali
                     }
                 }
             }
-            if(kpis.functions[supportedTypes[k] + ":" + path.join('/') + '/' + nodeName] != undefined && kpis.functions[supportedTypes[k] + ":" + path.join('/') + '/' + nodeName] != null){
-                theRoute[supportedTypes[k]](kpis.functions[supportedTypes[k] + ":" + path.join('/') + '/' + nodeName]);
-            } else {
-                var msg = '-- WARNING -- There is currently no control method defined for route ' + path.join('/') + '/' + nodeName + '. Please create it on /controllers/routesControllerFunctions.js and assign it to functions["' + path.join('/') + '/' + nodeName + '"]';
-                console.log(msg.red.bgWhite);
-                theRoute[supportedTypes[k]](noControlMethodCallback);
+
+            var aliasedFunction = false;
+            if(node[supportedTypes[k]].alias){
+                if(kpis.functions[node[supportedTypes[k]].alias] != undefined && kpis.functions[node[supportedTypes[k]].alias] != null){
+                    theRoute[supportedTypes[k]](kpis.functions[node[supportedTypes[k]].alias]);
+                    aliasedFunction = true;
+                }
             }
+
+            if(!aliasedFunction){
+                if(kpis.functions[supportedTypes[k] + ":" + path.join('/') + '/' + nodeName] != undefined && kpis.functions[supportedTypes[k] + ":" + path.join('/') + '/' + nodeName] != null){
+                    theRoute[supportedTypes[k]](kpis.functions[supportedTypes[k] + ":" + path.join('/') + '/' + nodeName]);
+                } else {
+                    var msg = '-- WARNING -- There is currently no control method defined for route ' + path.join('/') + '/' + nodeName + '. Please create it on /controllers/routesControllerFunctions.js and assign it to functions["' + path.join('/') + '/' + nodeName + '"]';
+                    console.log(msg.red.bgWhite);
+                    theRoute[supportedTypes[k]](noControlMethodCallback);
+                }
+            }
+
 
             console.log('Route ' + supportedTypes[k].toUpperCase() + ' "'  + path.join('/') + '/' + nodeName + '" created successfully'.green);
         }
@@ -267,6 +314,11 @@ var generateNodeRoutes = function(node, nodeName, path, router, baseUrl, preVali
     }
 
     app.use('', router);
+    app.get('*', function(req, res, next){
+        var err = new Error();
+        err.type = '404';
+        return next(err);
+    });
 }
 
 
@@ -281,7 +333,7 @@ var putMethodsOnReq = function(method){
 }
 
 
-var mockQueryGenerationMiddleWare = function(type, path, nodeName){
+var mockQueryGenerationMiddleWare = function(type, path, nodeName, alias){
     if(!global.expressHappiness.confObj.mockData.enable){
         return function(req, res, next){
             return next();
@@ -296,6 +348,20 @@ var mockQueryGenerationMiddleWare = function(type, path, nodeName){
     }
     route += nodeName;
     filename += nodeName;
+
+    if(alias){
+        if(fs.existsSync(global.expressHappiness.confObj.mockData.folder + '/' + alias + '.json')){
+            var mockData = require(global.expressHappiness.confObj.mockData.folder + '/' + alias + '.json');
+
+            return function(req, res, next){
+                req.expressHappiness.mockQuery = function(success){
+                    success(mockData);
+                }
+                return next();
+            }
+        }
+    }
+
 
     if(fs.existsSync(global.expressHappiness.confObj.mockData.folder + '/' + type + '.' + filename + '.json')){
         var mockData = require(global.expressHappiness.confObj.mockData.folder + '/' + type + '.' + filename + '.json');
@@ -351,23 +417,25 @@ var noControlMethodCallback = function(req, res, next){
     return next(err);
 }
 
-var putApipathToReq = function(path, nodeName){
+var putApipathToReq = function(path, nodeName, alias){
     return function(req, res, next){
         var newPath = path.slice(0);
         newPath.shift();
         newPath.push(nodeName);
         req.expressHappiness.apipath = newPath;
+        req.expressHappiness.routeAlias = alias;
         return next();
     }
 }
 
 
 var mockMiddlewareApplied = function(req, res, next){
-    if((req.expressHappiness.get('mock') != 1 && !_mockOperations[req.expressHappiness.apiMethod + ':' + req.route.path]) || !global.expressHappiness.confObj.mockData.enable){
+    if((req.expressHappiness.get('mock') != 1 && !_mockOperations[req.expressHappiness.apiMethod + ':' + req.route.path]
+        && !_mockOperations[req.expressHappiness.routeAlias]) || !global.expressHappiness.confObj.mockData.enable){
         return next();
     } else {
         req.expressHappiness.mockQuery(function(results){
-            return res.json({success:true, result:results, total: results.length});
+            return res.send(results);
         });
     }
 }
@@ -419,19 +487,29 @@ var registerErrors = function(app, errorsConfigurationFile, errorFile){
 
     if(!errors.hasOwnProperty('undefinedError')) {
         errors.undefinedError = undefinedError;
-    };
+    } else {
+        errors.undefinedError = formatError(undefinedError, errors.undefinedError)
+    }
     if(!errors.hasOwnProperty('invalidAttrs')) {
         errors.invalidAttrs = invalidAttrs;
-    };
+    } else {
+        errors.invalidAttrs = formatError(invalidAttrs, errors.invalidAttrs)
+    }
     if(!errors.hasOwnProperty('404')) {
         errors['404'] = fourZeroFour;
-    };
+    } else {
+        errors['404'] = formatError(fourZeroFour, errors['404'])
+    }
     if(!errors.hasOwnProperty('noMockData')) {
         errors.noMockData = noMockData;
-    };
+    } else {
+        errors.noMockData = formatError(noMockData, errors.noMockData)
+    }
     if(!errors.hasOwnProperty('underDevelopment')) {
         errors.underDevelopment = underDevelopment;
-    };
+    } else {
+        errors.underDevelopment = formatError(underDevelopment, errors.underDevelopment)
+    }
 
     var ErrorHandlerModule = require('./ErrorHandler.js');
     var ErrorHanlder = new ErrorHandlerModule(errorFile);
@@ -443,3 +521,12 @@ var registerErrors = function(app, errorsConfigurationFile, errorFile){
         }
     });
 };
+
+var formatError = function(error, options){
+    var keys = Object.keys(options);
+    for(var i=0; i<keys.length; i++){
+        var key = keys[i];
+        error[key] = options[key];
+    }
+    return error;
+}
