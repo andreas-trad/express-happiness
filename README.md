@@ -23,5 +23,13 @@ The main features of the framework are the above:
 
 <h2>Install</h2>
 <code>
-npm install express-happiness
+$ npm install express-happiness
 </code>
+
+<h2>Starting with it</h2>
+Every ExpressHappiness project consists of a number of files. These files are:
+<ul>
+<li><b>Routes tree configuration</b>: On this file you'll put / define all
+of the supported routes of your app with all of their details</li>
+<li><b>General configuration file</b>: This file holds configuration regarding </li>
+</ul>

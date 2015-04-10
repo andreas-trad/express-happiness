@@ -115,6 +115,8 @@ var validate = function(signature, req) {
                         reason.errors.push(field.key + ' must be of at max ' + field.maxChars + ' long.' + get(field.key) + ' provided.');
                     }
                 }
+            } else if(field.type == 'object'){
+                
             }
         } else { // case field is not passed
             if(field.mandatory){
@@ -157,6 +159,11 @@ exports.validateAttrs = function(req, res, next){
                 break;
             }
         }
+
+        if(!currentNode[req.expressHappiness.apiMethod].fields){
+            return next();
+        }
+
         var validation = validate(currentNode[req.expressHappiness.apiMethod].fields, req);
         if(validation.passed){
             return next();
