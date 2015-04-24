@@ -13,6 +13,165 @@ exports.init = function(confObj){
     reusableRequiredFields = require(confObj.reusableFieldsFile);
 }
 
+var unitValidator = function(req){
+    this.int = function(field, value, path){
+        if(!validator.isInt(value)){
+            return {
+                valid: false,
+                txt: path.join('.') + field.key + ' must be an integer. ' + value + ' provided.'
+            }
+        } else {
+            if(!!field.min){
+                if(value < field.min){
+                    return {
+                        valid: false,
+                        txt: path.join('.') + field.key + ' must be greater or equal to ' + field.min + '. ' + value + ' provided.'
+                    }
+                }
+            }
+            if(!!field.max){
+                if(value > field.min){
+                    return {
+                        valid: false,
+                        txt: path.join('.') + field.key + ' must be lower or equal to ' + field.max + '. ' + value + ' provided.'
+                    }
+                }
+            }
+            return {
+                valid: true
+            }
+        }
+    };
+
+    this.date = function(field, value, path){
+        var momentObj = moment(value, field.validationString);
+        if(!momentObj.isValid()){
+            return {
+                valid: false,
+                txt: path.join('.') + field.key + ' must be a date in the format: '+ field.validationString +'. ' + value + ' provided.'
+            }
+        } else {
+            // in case of dates, for easiness we keep the momentObj representation of the passed variable, no matter
+            // which is the format of the date that we expect
+            req.filteredParams[path.join('.') + field.key].momentObj = momentObj;
+            return {
+                valid: true
+            }
+        }
+    };
+
+    this.oneof = function(field, value, path){
+        if(field.acceptedValues.indexOf(value) == -1){
+            return {
+                valid: false,
+                txt: path.join('.') + field.key + ' must be one of ' + field.acceptedValues.join(', ') + '. ' + value + ' provided.'
+            }
+        } else {
+            return {
+                valid: true
+            }
+        }
+    };
+
+    this.boolean = function(field, value, path){
+        if(value !== true && value !== false && value !== 'true' && value !== 'false'){
+            return {
+                valid: false,
+                txt: path.join('.') + field.key + ' must be a boolean. ' + value + ' provided.'
+            }
+        } else {
+            return {
+                valid: true
+            }
+        }
+    };
+
+    this.numeric = function(field, value, path){
+        if(!validator.isFloat(value)){
+            return {
+                valid: false,
+                txt: path.join('.') + field.key + ' must be a number. ' + value + ' provided.'
+            }
+        } else {
+            return {
+                valid: true
+            }
+        }
+    };
+
+    this.string = function(field, value, path){
+        if(!!field.minChars){
+            if(value.length < field.minChars){
+                return {
+                    valid: false,
+                    txt: path.join('.') + field.key + ' must be of at least ' + field.minChars + ' long.' + value + ' provided.'
+                }
+            }
+        }
+        if(!!field.maxChars){
+            if(value.length > field.maxChars){
+                return {
+                    valid: false,
+                    txt: path.join('.') + field.key + ' must be of at max ' + field.maxChars + ' long.' + value + ' provided.'
+                }
+            }
+        }
+        return {
+            valid: true
+        }
+    };
+
+    this.array = function(field, value, path){
+
+    };
+
+    this.object = function(field, value, path){
+
+    };
+};
+
+
+var validate = function(obj, unitValidator, func, callback) {
+    var index = 0;
+    var done = false;
+    var iterations = Object.keys(obj).length;
+    var objKeys = Object.keys(obj);
+    var loop = {
+        next: function() {
+            if (done) {
+                return;
+            }
+
+            if (index < iterations) {
+                var self = this;
+                unitValidate(obj[objKeys[index]], unitValidator, function(){
+                    index++;
+                    func(self);
+                });
+
+            } else {
+                done = true;
+                callback();
+            }
+        }
+    };
+
+    loop.next();
+    return loop;
+};
+
+
+var unitValidate = function(unit, unitValidator, callback){
+    if(unit.type === 'object'){
+        validate(unit, unitValidator, function(loop){
+            loop.next();
+        }, callback)
+    } else {
+        unitValidator[unit.type](unit);
+        callback();
+    }
+};
+
 
 
 /*
@@ -116,7 +275,9 @@ var validate = function(signature, req) {
                     }
                 }
             } else if(field.type == 'object'){
-                
+
+            } else if(field.type == 'array'){
+
             }
         } else { // case field is not passed
             if(field.mandatory){
@@ -142,6 +303,9 @@ var validate = function(signature, req) {
 
 
 exports.validateAttrs = function(req, res, next){
+    var get = req.expressHappiness.get;
+    var set = req.expressHappiness.set;
+
     if(! restConf.routes[req.expressHappiness.apipath[0]] && !req.isRoot){
         var err = new Error();
         err.type = '404';
@@ -163,6 +327,9 @@ exports.validateAttrs = function(req, res, next){
         if(!currentNode[req.expressHappiness.apiMethod].fields){
             return next();
         }
+
+        var uv = new unitValidator(req);
+
 
         var validation = validate(currentNode[req.expressHappiness.apiMethod].fields, req);
         if(validation.passed){
