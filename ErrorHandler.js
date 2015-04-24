@@ -25,14 +25,15 @@ var ErrorHandler = function(logfileUrl){
             }
         }
 
+        var toSend = erObj.sendToClient.data;
         if(erObj.sendToClient){
             if(erObj.sendToClient.data){
                 if(erObj.sendToClient.data === 'err.details'){
-                    erObj.sendToClient.data = err.details;
+                    toSend = err.details;
                 }
             }
         }
-        res.status(erObj.sendToClient.code || 200).send(erObj.sendToClient.data || '');
+        res.status(erObj.sendToClient.code || 200).send(toSend || '');
     };
 }
 

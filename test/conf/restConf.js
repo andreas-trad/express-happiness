@@ -47,10 +47,13 @@ module.exports.conf = function(fieldsLoader){
                 groups:['userAccess'],
                 subRoutes: {
                     mytest: {
-                        get: {
+                        post: {
                             alias: 'mytest',
                             description: 'my test',
-                            mock: false
+                            mock: false,
+                            fields:[
+                                fieldsLoader.getField('testobj')
+                            ]
                         }
                     },
                     traffic: {

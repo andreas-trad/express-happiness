@@ -23,7 +23,7 @@ module.exports = {
         type:'object',
         humanReadable:'my test obj',
         description:'here goes the desc',
-        mandarory:true,
+        mandatory:true,
         keys:{
             alpha:{
                 type:'array',
