@@ -1,0 +1,12 @@
+{
+  "name": "eh-testing-server",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.0.2",
+    "express": "^4.1.1",
+    "express-jwt": "^0.6.2",
+    "express-unless": "^0.1.0",
+    "uinexpress": "*",
+    "underscore": "*"
+  }
+}
