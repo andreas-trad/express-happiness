@@ -7,7 +7,6 @@ var fs = require('fs');
 var colors = require('colors');
 var flatSignature = [];
 var app, router, confObj;
-var _mockOperations = {};
 
 
 var eh = function(p_app, p_router, conf){
@@ -19,10 +18,10 @@ var eh = function(p_app, p_router, conf){
 
     confObj = {
         mockData:{
-            enable: false,
-            folder: appDir + '/mockJSONs'
+            enable: true,
+            folder: appDir + '/mockJSONs',
+            global:false
         },
-        configurationFile:appDir + '/expressHappiness/conf/conf.js',
         reusableFieldsFile: appDir + '/expressHappiness/reusableFields.js',
         errorFile:appDir + '/expressHappiness/errors.log',
         errorsConfigurationFile:appDir + '/expressHappiness/conf/errors.js',
@@ -39,14 +38,7 @@ var eh = function(p_app, p_router, conf){
         }
     }
 
-    var errorOccurred = false
-    if(!fs.existsSync(confObj.configurationFile)){
-        errorOccurred = true;
-        var msg = "Configuration file (" + confObj.configurationFile + ") does not exist. Please create it according the documentation";
-        console.log(msg.red.bgWhite);
-    } else {
-        _mockOperations = require(confObj.configurationFile).conf.mockOperations;
-    }
+    var errorOccurred = false;
     if(!fs.existsSync(confObj.reusableFieldsFile)){
         errorOccurred = true;
         var msg = "Reusable fields file (" + confObj.reusableFieldsFile + ") does not exist. Please create it according the documentation";
@@ -246,7 +238,8 @@ var generateNodeRoutes = function(node, nodeName, path, router, baseUrl, preVali
 
             var theRoute = router.route(baseUrl + path.join('/') + '/' + nodeName);
             theRoute[supportedTypes[k]](putMethodsOnReq(supportedTypes[k]));
-            theRoute[supportedTypes[k]](putApipathToReq(path, nodeName, node[supportedTypes[k]].alias));
+            theRoute[supportedTypes[k]](putApipathToReq(path, nodeName,
+                node[supportedTypes[k]].alias, node[supportedTypes[k]].mock));
 
             if(preValidationMiddlewares.hasOwnProperty('eh-allRoutes')){
                 for(var ii=0; ii<preValidationMiddlewares['eh-allRoutes'].length; ii++){
@@ -417,21 +410,25 @@ var noControlMethodCallback = function(req, res, next){
     return next(err);
 }
 
-var putApipathToReq = function(path, nodeName, alias){
+var putApipathToReq = function(path, nodeName, alias, mock){
     return function(req, res, next){
         var newPath = path.slice(0);
         newPath.shift();
         newPath.push(nodeName);
         req.expressHappiness.apipath = newPath;
         req.expressHappiness.routeAlias = alias;
+        req.expressHappiness.mock = mock;
         return next();
     }
 }
 
 
 var mockMiddlewareApplied = function(req, res, next){
-    if((req.expressHappiness.get('mock') != 1 && !_mockOperations[req.expressHappiness.apiMethod + ':' + req.route.path]
-        && !_mockOperations[req.expressHappiness.routeAlias]) || !global.expressHappiness.confObj.mockData.enable){
+    if(global.expressHappiness.confObj.mockData.global){
+        req.expressHappiness.mockQuery(function(results){
+            return res.send(results);
+        });
+    } else if((req.expressHappiness.get('mock') != 1 && !req.expressHappiness.mock) || !global.expressHappiness.confObj.mockData.enable){
         return next();
     } else {
         req.expressHappiness.mockQuery(function(results){

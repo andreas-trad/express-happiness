@@ -18,6 +18,36 @@ module.exports = {
         description:'The Organization from which data is requested',
         mandatory:true
     },
+    testobj:{
+        key:'testObj',
+        type:'object',
+        humanReadable:'my test obj',
+        description:'here goes the desc',
+        mandarory:true,
+        keys:{
+            alpha:{
+                type:'array',
+                mandatory:true
+            },
+            beta:{
+                type:'oneof',
+                acceptedValues:['day', 'week', 'month', 'year']
+            },
+            gamma:{
+                type:'object',
+                keys:{
+                    gammaOne:{
+                        mandatory:true,
+                        type:'numeric'
+                    },
+                    gammaTwo:{
+                        mandatory:false,
+                        type:'numeric'
+                    }
+                }
+            }
+        }
+    },
     reportStartDate:{
         key:'reportStartDate',
         type:'date',

@@ -24,9 +24,9 @@ var appDir = path.dirname(require.main.filename);
 var eh = new expressHappiness(app, router, {
     mockData:{
         enable: true,
-        folder: appDir + '/mockdata'
+        folder: appDir + '/mockdata',
+        global: true
     },
-    configurationFile:appDir + '/conf/conf.js',
     reusableFieldsFile: appDir + '/reusableFields.js',
     errorFile:appDir + '/errors.log',
     errorsConfigurationFile:appDir + '/conf/errors.js',
@@ -34,20 +34,15 @@ var eh = new expressHappiness(app, router, {
     controllersFile:appDir + '/controllerFunctions.js'
 });
 
-var testMiddleware = function(req, res, next){
-    console.log('got in here');
-    res.send('error');
-};
 
 eh.generate('',
     {
-        userAccess:[testMiddleware]
     },
     {
     }
 );
 
-eh.start(3000);
+
 
 // Start the server
-//app.listen(3000);
+app.listen(3000);

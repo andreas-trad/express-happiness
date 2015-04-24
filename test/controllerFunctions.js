@@ -5,4 +5,9 @@ functions['getTraffic'] = function(req, res){
     res.send({a:'b'});
 }
 
+functions['mytest'] = function(req, res){
+    console.log('ok');
+    res.send({route:'my test'});
+}
+
 exports.functions = functions;
