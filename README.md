@@ -46,10 +46,10 @@ the mock operation</li>
  what code should be sent back to the client (200, 400, 401, etc) and what data will be served. Finally, on each of these
  error types, the developers can define a set of hook functions to be executed (email send, log to db, whatever).<br/>
  All these error handling parameters are defined on the Error Handling Configuration File.</li>
-<li><b>error log</b></li>: Is just a plain text file holding all logs printed out by the Error Handling mechanism
-<li><b>Controller Functions</b></li>: This file holds the full list of the functions that should be executed on each route.
+<li><b>error log</b>: Is just a plain text file holding all logs printed out by the Error Handling mechanism</li>
+<li><b>Controller Functions</b>: This file holds the full list of the functions that should be executed on each route.
  The main concept here is not to define / write the body of these functions within this file. This file acts as a "mapper"
  / router of all routes associating each of them with one specific controller function. The association is been done by
  the use of an associative array, each key of which is a string, either the full route definition or the route alias. Route
- aliases can be defined on the Routes Tree Configuration File.
+ aliases can be defined on the Routes Tree Configuration File.</li>
 </ul>
