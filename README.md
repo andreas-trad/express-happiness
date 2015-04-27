@@ -27,9 +27,29 @@ $ npm install express-happiness
 </code>
 
 <h2>Starting with it</h2>
-Every ExpressHappiness project consists of a number of files. These files are:
+Every ExpressHappiness project consists of a specific set of files that define the project's routes and behaviour.
+These files are:
 <ul>
-<li><b>Routes tree configuration</b>: On this file you'll put / define all
-of the supported routes of your app with all of their details</li>
-<li><b>General configuration file</b>: This file holds configuration regarding </li>
+<li><b>Routes Tree Configuration</b>: On this file you'll put / define all
+of the supported routes of your app with all of their details. These details include the method of the route
+(get / post / put), the parameters of the route (type, validation rules) and you can also enable / disable
+the mock operation</li>
+<li><b>Reusable Params File</b>: There are cases where many routes expect the exact same parameter, with the
+ exact same type and validation rules. In order to avoid rewriting the same parameter definition again and
+ again throughout all of these routes you can define them once and just reuse them to any number of routes.
+ These type of parameters are called "reusable" params and are defined on the Reusable Fields File</li>
+<li><b>Error Handling Configuration File</b>: At any point of the middlewares chain of any call you can write
+ trigger errors. Errors of custom type, decorated with custom details. Express Happiness provides an automated error handling
+ mechanism that takes care of any error triggered and provides the ability
+ to explicitly define the way the application will act in any of these cases. For each "custom" error type
+ Express Happiness provides the ability to define whether and what is going to be written to the error.log file,
+ what code should be sent back to the client (200, 400, 401, etc) and what data will be served. Finally, on each of these
+ error types, the developers can define a set of hook functions to be executed (email send, log to db, whatever).<br/>
+ All these error handling parameters are defined on the Error Handling Configuration File.</li>
+<li><b>error log</b></li>: Is just a plain text file holding all logs printed out by the Error Handling mechanism
+<li><b>Controller Functions</b></li>: This file holds the full list of the functions that should be executed on each route.
+ The main concept here is not to define / write the body of these functions within this file. This file acts as a "mapper"
+ / router of all routes associating each of them with one specific controller function. The association is been done by
+ the use of an associative array, each key of which is a string, either the full route definition or the route alias. Route
+ aliases can be defined on the Routes Tree Configuration File.
 </ul>
