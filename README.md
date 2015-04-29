@@ -81,12 +81,12 @@ For example, for type "int", the definition object of the param may (optionally)
 The full list of the supported attributes for each param are listed below:
 <table>
 <thead>
-<th>
-<td>Attribute key</td>
-<td>Mandatory</td>
-<td>Description</td>
-<td>Applies to</td>
-</th>
+<tr>
+<th>Attribute key</th>
+<th>Mandatory</th>
+<th>Description</th>
+<th>Applies to</th>
+</tr>
 </thead>
 <tbody>
 <tr>
@@ -102,6 +102,7 @@ of this param is "x"</td>
 <td>the type of the parameter. Might be one of: "int", "date", "oneof", "boolean", "numeric", "string", "array" and "object"</td>
 <td></td>
 </tr>
+</tbody>
 </table>
 
 
