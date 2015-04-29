@@ -79,7 +79,7 @@ param: {
 <br/>
 Not all of these characteristics are mandatory nor are they all. For each parameter type, special characteristics apply.
 For example, for type "int", the definition object of the param may (optionally) include "min" and "max" keys, etc.<br/>
-The list of the supported parameter types is:
+<br/><b>The list of the supported parameter types is:</b>
 <table>
 <tr>
 <td>int</td>
@@ -115,7 +115,7 @@ The list of the supported parameter types is:
 </tr>
 </table>
 
-The full list of the supported attributes for each param are listed below:
+<b>The full list of the supported attributes for each param are listed below:</b>
 <table>
 <thead>
 <tr>
