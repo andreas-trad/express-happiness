@@ -70,6 +70,7 @@ Each parameter, no matter its type, has the following structure:<br/>
 param: {
     "key": "the-key-name",
     "type": "one-of-the-supported-types",
+    "humanReadable": "short title of the param",
     "description": "A human-readable description of the parameter",
     "mandatory": "boolean-true-or-false",
     "validationFailureText": "The text that will be sent back to the client if the validation of the parameter fails"
@@ -78,6 +79,42 @@ param: {
 <br/>
 Not all of these characteristics are mandatory nor are they all. For each parameter type, special characteristics apply.
 For example, for type "int", the definition object of the param may (optionally) include "min" and "max" keys, etc.<br/>
+The list of the supported parameter types is:
+<table>
+<tr>
+<td>int</td>
+<td>Integer</td>
+</tr>
+<tr>
+<td>date</td>
+<td>Date</td>
+</tr>
+<tr>
+<td>oneof</td>
+<td>The value must be one of the specified</td>
+</tr>
+<tr>
+<td>boolean</td>
+<td>Boolean</td>
+</tr>
+<tr>
+<td>numeric</td>
+<td>any number</td>
+</tr>
+<tr>
+<td>string</td>
+<td>String</td>
+</tr>
+<tr>
+<td>array</td>
+<td>Array</td>
+</tr>
+<tr>
+<td>object</td>
+<td>Object</td>
+</tr>
+</table>
+
 The full list of the supported attributes for each param are listed below:
 <table>
 <thead>
@@ -101,6 +138,12 @@ of this param is "x"</td>
 <td>yes</td>
 <td>the type of the parameter. Might be one of: "int", "date", "oneof", "boolean", "numeric", "string", "array" and "object"</td>
 <td></td>
+</tr>
+<tr>
+<td>humanReadable</td>
+<td>no</td>
+<td>a short title of the parameter. This is used by the parameters validator on the error texts that exports on validation failures</td>
+<td>all types</td>
 </tr>
 <tr>
 <td>description</td>
@@ -136,7 +179,7 @@ of this param is "x"</td>
 <td>max</td>
 <td>no</td>
 <td>the maximum value (including this) that a param can accept</td>
-<td>int, number</td>
+<td>int, numeric</td>
 </tr>
 <tr>
 <td>minChars</td>
@@ -167,6 +210,18 @@ of this param is "x"</td>
 <td>no</td>
 <td>the maximum length an array-type value should have</td>
 <td>array</td>
+</tr>
+<tr>
+<td>acceptedValues</td>
+<td>yes</td>
+<td>an array listing all the acceptable values for this param</td>
+<td>oneof</td>
+</tr>
+<tr>
+<td>keys</td>
+<td>no</td>
+<td>an object that specifies the expected structure of an object type parameter</td>
+<td>object</td>
 </tr>
 </tbody>
 </table>
