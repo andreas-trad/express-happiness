@@ -32,24 +32,29 @@ These files are:
 <ul>
 <li><b>Routes Tree Configuration</b>: On this file you'll put / define all
 of the supported routes of your app with all of their details. These details include the method of the route
-(get / post / put), the parameters of the route (type, validation rules) and you can also enable / disable
-the mock operation</li>
-<li><b>Reusable Params File</b>: There are cases where many routes expect the exact same parameter, with the
+(get / post / put / delete), the parameters of the route (parameter type, validation rules) and you can also enable / disable
+the mock operation.<br/>
+For each route you can define an alias name and also the group(s) that this route belongs to. The "groups" that the
+routes belong to are custom groups, with custom names. The groups that a route belongs to define the middlewares that
+will be applied to it. More details about grouping and group-specific middlewares will be defined later on.
+</li>
+<li><b>Reusable Params File</b>: There are cases where many routes have the exact same parameter, with the
  exact same type and validation rules. In order to avoid rewriting the same parameter definition again and
- again throughout all of these routes you can define them once and just reuse them to any number of routes.
+ again throughout all of these routes you can define these params once and just reuse them to any of the routes. The file
+ that holds the "reusable params" definitions is the Reusable Params File.
  These type of parameters are called "reusable" params and are defined on the Reusable Fields File</li>
-<li><b>Error Handling Configuration File</b>: At any point of the middlewares chain of any call you can write
- trigger errors. Errors of custom type, decorated with custom details. Express Happiness provides an automated error handling
- mechanism that takes care of any error triggered and provides the ability
- to explicitly define the way the application will act in any of these cases. For each "custom" error type
- Express Happiness provides the ability to define whether and what is going to be written to the error.log file,
+<li><b>Error Handling Configuration File</b>: At any point of the middlewares chain of any call you can
+ trigger errors. Errors of custom types, decorated with custom details. Express Happiness provides an error handling
+ mechanism that automatically takes care this errors. The way each custom type's error will be handled is defined on this file.
+ The developer has the ability to define whether and what is going to be written to the error.log file,
  what code should be sent back to the client (200, 400, 401, etc) and what data will be served. Finally, on each of these
  error types, the developers can define a set of hook functions to be executed (email send, log to db, whatever).<br/>
  All these error handling parameters are defined on the Error Handling Configuration File.</li>
 <li><b>error log</b>: Is just a plain text file holding all logs printed out by the Error Handling mechanism</li>
-<li><b>Controller Functions</b>: This file holds the full list of the functions that should be executed on each route.
- The main concept here is not to define / write the body of these functions within this file. This file acts as a "mapper"
- / router of all routes associating each of them with one specific controller function. The association is been done by
- the use of an associative array, each key of which is a string, either the full route definition or the route alias. Route
- aliases can be defined on the Routes Tree Configuration File.</li>
+<li><b>Controller Functions</b>: This file defines the function that should be executed on each route.
+ The main concept here is not to define / write the body of these functions within this file but to have a "mapper"
+ endpoint though which anyone can easily find out what's going on, on any route.<br/>
+ The association between routes and controller functions is done by an associative array,
+ each key of which is a string, either the full route definition or the route alias and each value the corresponding controller function.
+ As mentioned, routes' aliases can be defined on the Routes Tree Configuration File.</li>
 </ul>
