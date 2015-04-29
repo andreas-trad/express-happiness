@@ -87,6 +87,7 @@ The full list of the supported attributes for each param are listed below:
 <td>Description</td>
 <td>Applies to</td>
 </th>
+</thead>
 <tbody>
 <tr>
 <td>key</td>
