@@ -94,13 +94,79 @@ The full list of the supported attributes for each param are listed below:
 <td>yes</td>
 <td>the key name of the parameter. For example, if on a route you expect for a param with the name "x", then the key
 of this param is "x"</td>
-<td>Applies to all of the params, not matter the type of them</td>
+<td>all types</td>
 </tr>
 <tr>
 <td>type</td>
 <td>yes</td>
 <td>the type of the parameter. Might be one of: "int", "date", "oneof", "boolean", "numeric", "string", "array" and "object"</td>
 <td></td>
+</tr>
+<tr>
+<td>description</td>
+<td>no</td>
+<td>the description of the parameter. It will be used on the auto-generated documentation of your API</td>
+<td>all types</td>
+</tr>
+<tr>
+<td>mandatory</td>
+<td>no</td>
+<td>defines whether the parameter is mandatory or not. If it's missing the parameter is not mandatory</td>
+<td>all types</td>
+</tr>
+<tr>
+<td>validationFailureText</td>
+<td>no</td>
+<td>the text that will sent back to the client if the validation of the specific parameter fails</td>
+<td>all types</td>
+</tr>
+<tr>
+<td>mandatoryFailureText</td>
+<td>no</td>
+<td>the text that will sent back to the client if a call does not pass a parameter that is mandatory</td>
+<td>all types</td>
+</tr>
+<tr>
+<td>min</td>
+<td>no</td>
+<td>the minimum value (including this) that a param can accept</td>
+<td>int, numeric</td>
+</tr>
+<tr>
+<td>max</td>
+<td>no</td>
+<td>the maximum value (including this) that a param can accept</td>
+<td>int, number</td>
+</tr>
+<tr>
+<td>minChars</td>
+<td>no</td>
+<td>the minimum characters that a string's type parameter's value might have</td>
+<td>string</td>
+</tr>
+<tr>
+<td>maxChars</td>
+<td>no</td>
+<td>the maximum characters that a string's type parameter's value might have</td>
+<td>string</td>
+</tr>
+<tr>
+<td>validationString</td>
+<td>yes</td>
+<td>the format that a date value should have. The formats are identical as on moment.js</td>
+<td>date</td>
+</tr>
+<tr>
+<td>minLength</td>
+<td>no</td>
+<td>the minimum length an array-type value should have</td>
+<td>array</td>
+</tr>
+<tr>
+<td>maxLength</td>
+<td>no</td>
+<td>the maximum length an array-type value should have</td>
+<td>array</td>
 </tr>
 </tbody>
 </table>
