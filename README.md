@@ -66,15 +66,15 @@ Each route expects for some params to be passed on call. As mentioned, Express H
 validation mechanism and the only thing you should do is to define the params and the validation rules that apply for
 each route. <br/>
 Each parameter, no matter its type, has the following structure:<br/>
-<code>
+<pre lang="javascript"><code>
 param: {
-    "key": "the-key-name",
-    "type": "one-of-the-supported-types",
-    "description": "A human-readable description of the parameter",
-    "mandatory": "boolean-true-or-false",
-    "validationFailureText": "The text that will be sent back to the client if the validation of the parameter fails"
+    &lt;"key": "the-key-name",
+    &lt;"type": "one-of-the-supported-types",
+    &lt;"description": "A human-readable description of the parameter",
+    &lt;"mandatory": "boolean-true-or-false",
+    &lt;"validationFailureText": "The text that will be sent back to the client if the validation of the parameter fails"
 }
-</code>
+</code></pre>
 <br/>
 Not all of these characteristics are mandatory nor are they all. For each parameter type, special characteristics apply.
 For example, for type "int", the definition object of the param may (optionally) include "min" and "max" keys, etc.<br/>
