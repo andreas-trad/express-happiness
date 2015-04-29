@@ -68,11 +68,11 @@ each route. <br/>
 Each parameter, no matter its type, has the following structure:<br/>
 <pre lang="javascript"><code>
 param: {
-    &lt;"key": "the-key-name",
-    &lt;"type": "one-of-the-supported-types",
-    &lt;"description": "A human-readable description of the parameter",
-    &lt;"mandatory": "boolean-true-or-false",
-    &lt;"validationFailureText": "The text that will be sent back to the client if the validation of the parameter fails"
+    "key": "the-key-name",
+    "type": "one-of-the-supported-types",
+    "description": "A human-readable description of the parameter",
+    "mandatory": "boolean-true-or-false",
+    "validationFailureText": "The text that will be sent back to the client if the validation of the parameter fails"
 }
 </code></pre>
 <br/>
