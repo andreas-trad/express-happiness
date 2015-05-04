@@ -13,19 +13,50 @@ exports.init = function(confObj){
     reusableRequiredFields = require(confObj.reusableFieldsFile);
 }
 
+var validateEmail = function(email){
+    var re = /^[a-zA-Z0-9+._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return re.test(email);
+}
+
+var hasTheErrorKey = function(field, errorKey){
+    if(filed.validationFailureTexts != null && field.validationFailureTexts != undefined){
+        if(field.validationFailureTexts[errorKey] != null && field.validationFailureTexts[errorKey] != undefined){
+            return field.validationFailureTexts[errorKey]
+        }
+    }
+    return false;
+}
+
 var unitValidator = {
     int: function(field, value, path, errors, callback){
+        var fieldNameOnResponse = field.humanReadable || path.join('.');
+
         if(!validator.isInt(value)){
-            errors.push(path.join('.') + ' must be an integer. ' + value + ' provided.');
+            var er_message = hasTheErrorKey(field, 'type');
+            if(er_message === false){
+                errors.push(fieldNameOnResponse + ' must be an integer. ' + value + ' provided.');
+            } else {
+                errors.push(er_message);
+            }
         } else {
             if(!!field.min){
                 if(value < field.min){
-                    errors.push(path.join('.') + ' must be greater or equal to ' + field.min + '. ' + value + ' provided.');
+                    var er_message = hasTheErrorKey(field, 'min');
+                    if(er_message === false){
+                        errors.push(fieldNameOnResponse + ' must be greater or equal to ' + field.min + '. ' + value + ' provided.');
+                    } else {
+                        errors.push(er_message);
+                    }
                 }
             }
             if(!!field.max){
                 if(value > field.min){
-                    errors.push(path.join('.') + ' must be lower or equal to ' + field.max + '. ' + value + ' provided.');
+                    var er_message = hasTheErrorKey(field, 'max');
+                    if(er_message === false) {
+                        errors.push(fieldNameOnResponse + ' must be lower or equal to ' + field.max + '. ' + value + ' provided.');
+                    } else {
+                        errors.push(er_message);
+                    }
                 }
             }
         }
@@ -33,9 +64,16 @@ var unitValidator = {
     },
 
     date: function(field, value, path, errors, callback){
+        var fieldNameOnResponse = field.humanReadable || path.join('.');
+
         var momentObj = moment(value, field.validationString);
         if(!momentObj.isValid()){
-            errors.push(path.join('.') + ' must be a date in the format: '+ field.validationString +'. ' + value + ' provided.');
+            var er_message = hasTheErrorKey(field, 'validationString');
+            if(er_message === false) {
+                errors.push(fieldNameOnResponse + ' must be a date in the format: ' + field.validationString + '. ' + value + ' provided.');
+            } else {
+                errors.push(er_message);
+            }
         } else {
             // in case of dates, for easiness we keep the momentObj representation of the passed variable, no matter
             // which is the format of the date that we expect
@@ -45,41 +83,137 @@ var unitValidator = {
     },
 
     oneof: function(field, value, path, errors, callback){
+        var fieldNameOnResponse = field.humanReadable || path.join('.');
+
         if(field.acceptedValues.indexOf(value) == -1){
-            errors.push(path.join('.') + ' must be one of ' + field.acceptedValues.join(', ') + '. ' + value + ' provided.');
+            var er_message = hasTheErrorKey(field, 'acceptedValues');
+            if(er_message === false) {
+                errors.push(fieldNameOnResponse + ' must be one of ' + field.acceptedValues.join(', ') + '. ' + value + ' provided.');
+            } else {
+                errors.push(er_message);
+            }
         }
         callback();
     },
 
     boolean: function(field, value, path, errors, callback){
+        var fieldNameOnResponse = field.humanReadable || path.join('.');
+
         if(value !== true && value !== false && value !== 'true' && value !== 'false'){
-            errors.push(path.join('.') + ' must be a boolean. ' + value + ' provided.');
+            var er_message = hasTheErrorKey(field, 'type');
+            if(er_message === false) {
+                errors.push(fieldNameOnResponse + ' must be a boolean. ' + value + ' provided.');
+            } else {
+                errors.push(er_message);
+            }
         }
         callback();
     },
 
     numeric: function(field, value, path, errors, callback){
+        var fieldNameOnResponse = field.humanReadable || path.join('.');
+
         if(!validator.isFloat(value)){
-            errors.push(path.join('.') + ' must be a number. ' + value + ' provided.');
+            var er_message = hasTheErrorKey(field, 'type');
+            if(er_message === false) {
+                errors.push(fieldNameOnResponse + ' must be a number. ' + value + ' provided.');
+            } else {
+                errors.push(er_message);
+            }
+        }
+        callback();
+    },
+
+    email: function(field, value, path, errors, callback){
+        var fieldNameOnResponse = field.humanReadable || path.join('.');
+
+        if(!validateEmail(value)){
+            var er_message = hasTheErrorKey(field, 'type');
+            if(er_message === false) {
+                errors.push(fieldNameOnResponse + ' must be a valid email address. ' + value + ' provided.');
+            } else {
+                errors.push(er_message);
+            }
         }
         callback();
     },
 
     string: function(field, value, path, errors, callback){
+        var fieldNameOnResponse = field.humanReadable || path.join('.');
+
         if(!!field.minChars){
             if(value.length < field.minChars){
-                errors.push(path.join('.') + ' must be of at least ' + field.minChars + ' long.' + value + ' provided.');
+                var er_message = hasTheErrorKey(field, 'minChars');
+                if(er_message === false) {
+                    errors.push(fieldNameOnResponse + ' must be of at least ' + field.minChars + ' long. ' + value + ' provided.');
+                } else {
+                    errors.push(er_message);
+                }
             }
         }
         if(!!field.maxChars){
             if(value.length > field.maxChars){
-                errors.push(path.join('.') + ' must be of at max ' + field.maxChars + ' long.' + value + ' provided.');
+                var er_message = hasTheErrorKey(field, 'maxChars');
+                if(er_message === false) {
+                    errors.push(fieldNameOnResponse + ' must be of at max ' + field.maxChars + ' long. ' + value + ' provided.');
+                } else {
+                    errors.push(er_message);
+                }
+            }
+        }
+        if(!!filed.regexp){
+            var er_message = hasTheErrorKey(field, 'type');
+            try{
+                var passes = field.regexp.test(value);
+                if(!passes){
+                    if(er_message === false) {
+                        errors.push(fieldNameOnResponse + ' do not match the provided regular expression');
+                    } else {
+                        errors.push(er_message);
+                    }
+                }
+            } catch(err){
+                if(er_message === false) {
+                    errors.push(fieldNameOnResponse + ' do not match the provided regular expression');
+                } else {
+                    errors.push(er_message);
+                }
             }
         }
         callback();
     },
 
     array: function(field, value, path, errors){
+        var fieldNameOnResponse = field.humanReadable || path.join('.');
+
+        if(!(variable.constructor === Array)){
+            var er_message = hasTheErrorKey(field, 'type');
+            if(er_message === false) {
+                errors.push(fieldNameOnResponse + ' must be of type array. ' + value + ' provided.');
+            } else {
+                errors.push(er_message);
+            }
+        }
+        if(!!field.minLength){
+            if(value.length < field.minLength){
+                var er_message = hasTheErrorKey(field, 'minLength');
+                if(er_message === false) {
+                    errors.push(fieldNameOnResponse + ' must be of at least of ' + field.minLength + ' length. ' + value + ' provided.');
+                } else {
+                    errors.push(er_message);
+                }
+            }
+        }
+        if(!!field.maxLength){
+            if(value.length > field.maxLength){
+                var er_message = hasTheErrorKey(field, 'maxLength');
+                if(er_message === false) {
+                    errors.push(fieldNameOnResponse + ' must be of max length ' + field.maxLength + '. ' + value + ' provided.');
+                } else {
+                    errors.push(er_message);
+                }
+            }
+        }
         callback();
     }
 
