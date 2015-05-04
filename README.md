@@ -72,8 +72,7 @@ param: {
     "type": "one-of-the-supported-types",
     "humanReadable": "short title of the param",
     "description": "A human-readable description of the parameter",
-    "mandatory": "boolean-true-or-false",
-    "validationFailureText": "The text that will be sent back to the client if the validation of the parameter fails"
+    "mandatory": "boolean-true-or-false"
 }
 </code></pre>
 <br/>
@@ -274,5 +273,25 @@ supported keys of this object are listed on the very next table that follows.</t
 </tbody>
 </table>
 
+So, as an example:
+<pre lang="javascript"><code>
+param: {
+    "key": "user_age",
+    "type": "int",
+    "humanReadable": "Age",
+    "description": "The age of the user",
+    "mandatory": "true",
+    "min": 18,
+    "validationFailureTexts": {
+        "mandatory": "Please provide your age",
+        "min": "Sorry, you must be at least 18 years old"
+    }
+}
+</code></pre>
 
-
+In such case if the submitted value for the "age" is under 18 (let's say 17) then on the "errors" array of the response there will be the
+text "Sorry, you must be at least 18 years old". If the key "min" was missing from the "validationFailureTexts" object (of if
+the "validationFailureTexts" was missing at all, the error text that would be included on the errors array would be the default:
+"Age must be greater or equal to 18. 17 provided."<br/>
+Finally, in the case that there was the "humanReadable" key missing from the field's definition, then the error text would be:
+"user_age must be greater or equal to 18. 17 provided."
