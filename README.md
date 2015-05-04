@@ -158,15 +158,11 @@ of this param is "x"</td>
 <td>all types</td>
 </tr>
 <tr>
-<td>validationFailureText</td>
+<td>validationFailureTexts</td>
 <td>no</td>
-<td>the text that will sent back to the client if the validation of the specific parameter fails</td>
-<td>all types</td>
-</tr>
-<tr>
-<td>mandatoryFailureText</td>
-<td>no</td>
-<td>the text that will sent back to the client if a call does not pass a parameter that is mandatory</td>
+<td>An object containing the text messages that will sent back to the client for all (or any) cases that the validation fails. For example,
+if a mandatory field is missing the text that will be sent back to the client is defined on the key "mandatory" of this object, etc. The
+supported keys of this object are listed on the very next table that follows.</td>
 <td>all types</td>
 </tr>
 <tr>
@@ -222,6 +218,58 @@ of this param is "x"</td>
 <td>no</td>
 <td>an object that specifies the expected structure of an object type parameter</td>
 <td>object</td>
+</tr>
+</tbody>
+</table>
+
+<b>The supported keys of the validationFailureTexts are:</b>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>In case...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>type</td>
+<td>the type of the field's value is not of the defined/expected field's type</td>
+</tr>
+<tr>
+<td>mandatory</td>
+<td>a mandatory filed is missing</td>
+</tr>
+<tr>
+<td>min</td>
+<td>the either of type int or numeric field's value is lower than the minimum accepted, according to the min attribute of the field's definition</td>
+</tr>
+<tr>
+<td>max</td>
+<td>the either of type int or numeric field's value is greater than the maximum accepted, according to the max attribute of the field's definition</td>
+</tr>
+<tr>
+<td>minChars</td>
+<td>the characters of the provided string are less than the minimum accepted, according to the minChars attribute of the field's definition</td>
+</tr>
+<tr>
+<td>maxChars</td>
+<td>the characters of the provided string are more than the maximum accepted, according to the maxChars attribute of the field's definition</td>
+</tr>
+<tr>
+<td>validationString</td>
+<td>the value provided for the field of type date is not compatible with the validationString of the field's definition</td>
+</tr>
+<tr>
+<td>minLength</td>
+<td>the length of the array passed on the specific field's value is lower than the minimum accepted, according to the minLength attribute of the field's definition</td>
+</tr>
+<tr>
+<td>maxLength</td>
+<td>the length of the array passed on the specific field's value is greater than the maximum accepted, according to the maxLength attribute of the field's definition</td>
+</tr>
+<tr>
+<td>acceptedValues</td>
+<td>the value of the, of type oneof, field is not present on the acceptedValues array on the field's definition</td>
 </tr>
 </tbody>
 </table>
