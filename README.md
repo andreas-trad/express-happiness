@@ -291,7 +291,7 @@ param: {
 
 In such case if the submitted value for the "age" is under 18 (let's say 17) then on the "errors" array of the response there will be the
 text "Sorry, you must be at least 18 years old". If the key "min" was missing from the "validationFailureTexts" object (of if
-the "validationFailureTexts" was missing at all, the error text that would be included on the errors array would be the default:
+the "validationFailureTexts" was missing at all on the field's definition), the error text that would be included on the errors array would be the default:
 "Age must be greater or equal to 18. 17 provided."<br/>
 Finally, in the case that there was the "humanReadable" key missing from the field's definition, then the error text would be:
 "user_age must be greater or equal to 18. 17 provided."
