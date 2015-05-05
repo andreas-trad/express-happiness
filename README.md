@@ -79,6 +79,7 @@ param: {
 Not all of these characteristics are mandatory nor are they all. For each parameter type, special characteristics apply.
 For example, for type "int", the definition object of the param may (optionally) include "min" and "max" keys, etc.<br/>
 <br/><b>The list of the supported parameter types is:</b>
+<p>Table 1</p>
 <table>
 <tr>
 <td>int</td>
@@ -115,6 +116,7 @@ For example, for type "int", the definition object of the param may (optionally)
 </table>
 
 <b>The full list of the supported attributes for each param are listed below:</b>
+<p>Table 2</p>
 <table>
 <thead>
 <tr>
@@ -222,6 +224,7 @@ supported keys of this object are listed on the very next table that follows.</t
 </table>
 
 <b>The supported keys of the validationFailureTexts are:</b>
+<p>Table 3</p>
 <table>
 <thead>
 <tr>
@@ -331,8 +334,201 @@ Though, each of these params have a "key" attribute. This is the name of the par
 during the actual calls that our service will receive.
 </p>
 
+<h3>Defining object type params</h3>
+As mentioned, one of the supported param types is the "object". Also, one of the supported on object-type parameter's attributes
+is "keys".<br/>
+You can use the "keys" attribute of an object parameter in order to define (to any depth) the expected structure of the object
+and not only this. You can apply / define validation rules of each of them, no matter which depth it is. Here's an example:<br/>
+Let's suppose that on a specific call we expect for a parameter with the name "user_data" which will hold the user's information
+in a well defined structure. Both the structure of the expected object and the validation rules that apply to it are made
+obvious through the following parameter definition:
+<pre lang="javascript"><code>
+user:{
+    key:'user_data',
+    type:'object',
+    humanReadable:'User data',
+    description:'Full user information',
+    mandatory:true,
+    keys:{
+        gender:{
+            type:'oneof',
+            mandatory:true,
+            acceptedValues: ['male', 'female'],
+            validationFailureTexts: {
+                mandatory: 'Please specify your gender',
+                acceptedValues: 'Please pick between male and female'
+            }
+        },
+        country:{
+            type:'oneof',
+            acceptedValues:['Greece', 'Sweden', 'Australia', 'Romania']
+        },
+        name:{
+            type:'object',
+            keys:{
+                first:{
+                    mandatory:true,
+                    type:'string'
+                },
+                last:{
+                    mandatory:true,
+                    type:'string',
+                    validationFailureTexts: {
+                        mandatory: 'Please specify your last name'
+                    }
+                },
+                middle: {
+                    mandatory: false,
+                    type: 'string'
+                }
+            }
+        }
+    }
+}
+</code></pre>
+So, as you can see, not only we define the structure of the expected object but we can define the validation rules that might
+apply to any of the keys of the object. Please mention that the "name" key is an object itself and it also contains the "keys"
+parameter which holds the information regarding the expected keys of it. There's no limit on the depth of the nested objects
+and parameters.<br/>
+The "keys" param is an object which holds a set of keys. These keys represent / map the expected keys of the object.<br/>
+The attributes of each one of these keys are identical with the attributes used in plain (not-object) parameters. All attributes
+of table 2 apply just fine to all nested keys of all objects. The only difference between the definition of a plain parameter
+and the definition of an object's key is that on the object key's definition there's no "key" attribute. The "key", that is
+the expected name of the key on the provided object during a call, is identical to the name of the key itself. E.g. on the
+specific example we expect the user_data.name.first to be present.<br/>
+This has implemented this way for two reasons:
+<ul>
+<li>There's no need and no way to refer to a nested key from services such as the FieldsLoader (we'll see about that later on)</li>
+<li>We wanted to mimic the structure of the object in an one-to-one mapping</li>
+</ul>
+During the parameters validation process, which we'll analyse on following chapter, the full object is been validated according
+to the definition of it. Don't worry this process is 100% asynchronous, so you can go ahead and create as deep, as long and
+as complex object parameter definitions. It won't block your app during validation.
+
 <h2>Routes Tree Configuration File</h2>
 Now that we've defined the parameters that we're going to (re)use on our endpoints, it's time to define
 these calls. <i>Of course you can always come back to the Reusable Params File and update it with new
 ones.<i/>
-All of the supported routes of our application are defined in this very file.
+All of the supported routes of our application are defined in this very file. <br/>
+In order to be able to reuse the parameters we defined in the Reusable Params File, we need the (built in) FieldsLoader
+module. For this the structure / format of our Routes Tree Configuration File should look like this:
+<pre lang="javascript"><code>
+module.exports.conf = function(fieldsLoader){
+    return {
+        routes:{
+            // here go all of the supported routes of the application
+        }
+    }
+};
+</code></pre>
+
+You might have noticed the term "Tree" in the name of the "Routes Tree Configuration File". Before further analysing the
+way you can define your routes in here, it's good to mention the concept that it implements.<br/>
+In an application there might be routes of the same url (e.g. /a/b) but of different types (e.g. GET, POST). Also, in
+an application there might be routes that do something and also subroutes of it that do something else. For example,
+there might be the route /a/b and also the route /a/b/c.<br/>
+The way the routes are defined on the Routes Tree Definition File respect both of the above facts. On any given url you
+can separately define the various supported call types and then you can continue deeper defining the supported subroutes of it.<br/>
+In the specific example here's a possible / valid Routes Tree Configuration File:
+<pre lang="javascript"><code>
+module.exports.conf = function(fieldsLoader){
+    return {
+        routes:{
+            a:{
+                subRoutes: {
+                    b: {
+                        get: {
+                            // here goes the GET /a/b route definition
+                        },
+                        post: {
+                            // here goes the POST /a/b route definition
+                        },
+                        subRoutes: {
+                            c: {
+                                get: {
+                                    // here goes the GET /a/b/c route definition
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+};
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
