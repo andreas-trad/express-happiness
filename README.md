@@ -396,7 +396,7 @@ of table 2 apply just fine to all nested keys of all objects. The only differenc
 and the definition of an object's key is that on the object key's definition there's no "key" attribute. The "key", that is
 the expected name of the key on the provided object during a call, is identical to the name of the key itself. E.g. on the
 specific example we expect the user_data.name.first to be present.<br/>
-This has implemented this way for two reasons:
+This has been implemented this way for two reasons:
 <ul>
 <li>There's no need and no way to refer to a nested key from services such as the FieldsLoader (we'll see about that later on)</li>
 <li>We wanted to mimic the structure of the object in an one-to-one mapping</li>
@@ -408,7 +408,7 @@ as complex object parameter definitions. It won't block your app during validati
 <h2>Routes Tree Configuration File</h2>
 Now that we've defined the parameters that we're going to (re)use on our endpoints, it's time to define
 these calls. <i>Of course you can always come back to the Reusable Params File and update it with new
-ones.<i/>
+ones.</i>
 All of the supported routes of our application are defined in this very file. <br/>
 In order to be able to reuse the parameters we defined in the Reusable Params File, we need the (built in) FieldsLoader
 module. For this the structure / format of our Routes Tree Configuration File should look like this:
@@ -458,6 +458,46 @@ module.exports.conf = function(fieldsLoader){
 };
 </code></pre>
 
+In general, the supported keys for any route (and subroute) are:
+<p>Table 4</p>
+<table>
+<tr>
+<td>get</td>
+<td>it holds an object that specifies the special </td>
+</tr>
+<tr>
+<td>post</td>
+<td></td>
+</tr>
+<tr>
+<td>put</td>
+<td></td>
+</tr>
+<tr>
+<td>delete</td>
+<td></td>
+</tr>
+<tr>
+<td>alias</td>
+<td></td>
+</tr>
+<tr>
+<td>description</td>
+<td></td>
+</tr>
+<tr>
+<td>mock</td>
+<td></td>
+</tr>
+<tr>
+<td>subRoutes</td>
+<td></td>
+</tr>
+<tr>
+<td>fields</td>
+<td></td>
+</tr>
+</table>
 
 
 
