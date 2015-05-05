@@ -295,3 +295,33 @@ the "validationFailureTexts" was missing at all on the field's definition), the 
 "Age must be greater or equal to 18. 17 provided."<br/>
 Finally, in the case that there was the "humanReadable" key missing from the field's definition, then the error text would be:
 "user_age must be greater or equal to 18. 17 provided."
+<p>
+Now it's time to proceed with your Reusable Params File.<br/>
+The reusable params file is just a module that exports an object. This object has a number of keys. Each
+key holds another object which represents the definition of a parameter. <br/>
+The name of the key is the way you'll refer to the parameter from the Routes Tree Configuration File.<br/>
+So, let's assume that you want to define two reusable parameters on this file, parameter "id" and parameter
+"cat_id". Here's a possible / valid definition of these two params in the Reusable Params File:
+<pre lang="javascript"><code>
+module.exports = {
+    id:{
+        key:'id',
+        type:'int',
+        humanReadable: 'organization id',
+        description:'The Organization from which data is requested',
+        mandatory:true
+    },
+    category: {
+        key:'cat_id',
+        type:'oneof',
+        humanReadable: 'Product category',
+        description:'The category of the product',
+        mandatory:false,
+        acceptedValues: ['shoes', 'clothes'],
+        validationFailureTexts: {
+            acceptedValues: 'Sorry, only shoes or clothes categories are supported'
+        }
+    }
+}
+</code></pre>
+</p>
