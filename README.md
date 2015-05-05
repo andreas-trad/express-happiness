@@ -324,4 +324,15 @@ module.exports = {
     }
 }
 </code></pre>
+Pay attention that we have a unique name for each parameter defined here, which is the key of the
+exported module. This name will be used in the Routes Tree Configuration File in order to load and
+define the parameters that each route will expect for. <br/>
+Though, each of these params have a "key" attribute. This is the name of the parameter as we expect it
+during the actual calls that our service will receive.
 </p>
+
+<h2>Routes Tree Configuration File</h2>
+Now that we've defined the parameters that we're going to (re)use on our endpoints, it's time to define
+these calls. <i>Of course you can always come back to the Reusable Params File and update it with new
+ones.<i/>
+All of the supported routes of our application are defined in this very file.
