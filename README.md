@@ -661,6 +661,13 @@ exports.errors = {
             code:404,
             data:'Invalid route'
         }
+    },
+    'my_custom_error_code':{
+        log:false,
+        sendToClient:{
+            code:500,
+            data:'There was an error fulfilling your request'
+        }
     }
 }
 </code></pre>
@@ -717,8 +724,23 @@ act as middlewares)
 </tbody>
 </table>
 
+<h3>Triggering Errors</h3>
+Once you define all of your error on the Error Handling Configuration File you can at any time, from anywhere on your code
+trigger any of these by the use of this, simple, code:
+<p>Code Snippet 10. <b>Triggering errors</b></p>
+<pre language="javascript"><code>
+var err = new Error();
+err.type = 'my_custom_error';
+err.details = 'The details of the error. Might be either a string, such as this, or any other data type (object, array etc)';
+return next(err);
+</code></pre>
 
+In order for this part of code to work you must have the "next" function available.
+Fot those who are not that familiar with "next" function, please have a look <a href="http://expressjs.com/guide/using-middleware.html" target="_blank">here</a>.
+<br/>Once you trigger this event the rest is on Express Happiness to take care of, according to the Error Handling Configuration File.
 
+<h3>Predefined Errors</h3>
+Express Happiness comes with a series of error types predefined. 
 
 
 
