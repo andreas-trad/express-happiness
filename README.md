@@ -634,10 +634,88 @@ module.exports.conf = function(fieldsLoader){ // mind the "fieldsLoader" argumen
 };
 </code></pre>
 
+<h2>Error Handling and Error Handling Configuration File</h2>
+The way errors are handled by Express Happiness is centralized and configurable. All errors, including the unknown, are
+handled by the framework itself and the developer has the ability to configure the behaviour of the app in each error type.
+Express Happiness also provides the ability to define custom error types, define the behaviour of the app in each of them,
+trigger such errors from anywhere in your middlewares chain and let the framework take care of them accordingly.<br/>
+The way each error type should be treated by the application is defined on the Error Handling Configuration File.
+<br/>The basic structure of this file is the following:
+<p>Code snippet 9. <b>Error Handling Configuration File Basic Structure</b>
+<pre language="javascript"><code>
+exports.errors = {
+    undefinedError:{
+        log:true,
+        humanReadable: 'Unresolved error code',
+        sendToClient: {
+            code:500,
+            data: 'ErrCode: 1 - There was an error fulfilling your request at the moment. Please try again in a while'
+        },
+        hooks:[
+            // here you can put whatever you want
+        ]
+    },
+    '404':{
+        log:true,
+        sendToClient: {
+            code:404,
+            data:'Invalid route'
+        }
+    }
+}
+</code></pre>
 
-
-
-
+The Error Handling Configuration File exports an object. Each object key represents the "type" of the error. So, in our
+example, if an undefined error gets triggered by the app, our application will log it, it will write to the log file the
+text "Unresolved error code" and the client will receive a 500 code along with the body "ErrCode: 1 - There was an error
+fulfilling your request at the moment. Please try again in a while".</br>
+Let's dive deeper and see which attributes are supported for each error type defined on this file.
+<p>Table 6. <b>Supported attributes on error configuration</b></p>
+<table>
+<thead>
+<tr>
+<th>Attribute name</th>
+<th>Type</th>
+<th>Mandatory</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>log</td>
+<td>boolean</td>
+<td>no (default: false)</td>
+<td>If log is set to true, this error will be logged to the error.log file</td>
+</tr>
+<tr>
+<td>humanReadable</td>
+<td>string</td>
+<td>no</td>
+<td>a human readable description of the error. This is what it will get logged to the error.log file if log is set to true</td>
+</tr>
+<tr>
+<td>sendToClient</td>
+<td>object with two keys: code and data</td>
+<td>no</td>
+<td>with the use of this attribute you can define the response code and the response body that will be sent back to the client. If you
+want to send to the client the details of the error object just put there (in quotes) 'err.details'</td>
+</tr>
+<tr>
+<td>hooks</td>
+<td>array</td>
+<td>no</td>
+<td>a list of functions to be executed whenever an error of this type occurs. The hook functions should take 3 arguments:
+<ul>
+<li>req (the req object)</li>
+<li>errorDefinitionObject (the error definition object taken from the Error Handling Configuration File)</li>
+<li>err (the actual error triggered during the call stack)</li>
+</ul>
+These hook functions get executed before your app responds to the client they are not part of the calls chain (they do not
+act as middlewares)
+</td>
+</tr>
+</tbody>
+</table>
 
 
 
