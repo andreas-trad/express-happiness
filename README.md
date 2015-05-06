@@ -423,11 +423,11 @@ module.exports.conf = function(fieldsLoader){
 </code></pre>
 
 You might have noticed the term "Tree" in the name of the "Routes Tree Configuration File". Before further analysing the
-way you can define your routes in here, it's good to mention the concept that it implements.<br/>
+way we can define your routes in here, it's good to mention a few things regarding its concept.<br/>
 In an application there might be routes of the same url (e.g. /a/b) but of different types (e.g. GET, POST). Also, in
 an application there might be routes that do something and also subroutes of it that do something else. For example,
 there might be the route /a/b and also the route /a/b/c.<br/>
-The way the routes are defined on the Routes Tree Definition File respect both of the above facts. On any given url you
+The way the routes are defined on the Routes Tree Definition File respect both of the above facts. On any given path you
 can separately define the various supported call types and then you can continue deeper defining the supported subroutes of it.<br/>
 In the specific example here's a possible / valid Routes Tree Configuration File:
 <pre lang="javascript"><code>
@@ -458,52 +458,72 @@ module.exports.conf = function(fieldsLoader){
 };
 </code></pre>
 
-In general, the supported keys for any route (and subroute) are:
-<p>Table 4</p>
+In general, the tree that we are defining here consists of paths and endpoints. Everything starts on the "routes" parameter
+of the returned object. "a" represents a path, the path "/a". This path has subRoutes, like "/a/b". So, we define these
+subroutes on the "subRoutes" parameter of it.<br/>
+"b" is a path itself as well. Following the object's structure, is obvious that it represents the path "/a/b". A path might
+have (or might not have) endpoints. For example the path "/a" does not have any endpoints. Though, path "/a/b" has get and post
+endpoints. <br/>
+The endpoints are defined by the use of the corresponding key (one of "get", "post", "put", "delete"). The endpoints are the "leafs"
+of this tree while the paths act as the branches.<br/>
+A branch can have sub-branches and leafs. A leaf cannot have neither sub-branches nor sub-leafs, and that's we call then "endpoints".<br/>
+Within the "subRoutes" parameter of any path we can only define paths.<br/>
+On any endpoint we can define the fields that we're expecting.<br/>
+Here's a table with all the supported attributes of each element:
+<p>Table 4 <b>Path's supported attributes</b></p>
 <table>
+<thead>
 <tr>
-<td>get</td>
-<td>it holds an object that specifies the special </td>
+<th>Attribute name</th>
+<th>Description</th>
 </tr>
+</thead>
+<tbody>
 <tr>
-<td>post</td>
-<td></td>
-</tr>
-<tr>
-<td>put</td>
-<td></td>
-</tr>
-<tr>
-<td>delete</td>
-<td></td>
-</tr>
-<tr>
-<td>alias</td>
-<td></td>
-</tr>
-<tr>
-<td>description</td>
-<td></td>
-</tr>
-<tr>
-<td>mock</td>
-<td></td>
+<td>groups</td>
+<td>an array containing all the groups the path belongs to</td>
 </tr>
 <tr>
 <td>subRoutes</td>
-<td></td>
+<td>an object which keys will represent the next sub-section of the path</td>
 </tr>
 <tr>
-<td>fields</td>
-<td></td>
+<td>any of the supported call types (one of "get", "post", "put", "delete")</td>
+<td>defines an endpoint to the specific path. E.g. by placing the "get" key on a path it's value must be an object defining
+the characteristics of the specific endpoint</td>
 </tr>
+</tbody>
 </table>
 
-
-
-
-
-
+<p>Table 5 <b>Endpoints's supported attributes</b></p>
+<table>
+<thead>
+<tr>
+<th>Attribute name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>groups</td>
+<td>an array containing all the groups the path belongs to</td>
+</tr>
+<tr>
+<td>alias (optional)</td>
+<td>a string representation / alias name of the specific endpoint</td>
+</tr>
+<tr>
+<td>description (optional)</td>
+<td>a human readable description of the endpoint. This will be used on the auto-generated documentation of your API</td>
+</tr>
+<tr>
+<td>fields (optional)</td>
+<td>an array containing all the fields that are expected on this endpoint. It will be used both by the validator and the
+auto-generated documentation process. If your endpoint does not expect any parameters or you don't want to apply any
+params validation you can just skip it</td>
+</tr>
+</tbody>
+</table>
 
 
 
