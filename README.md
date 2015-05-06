@@ -740,7 +740,81 @@ Fot those who are not that familiar with "next" function, please have a look <a 
 <br/>Once you trigger this event the rest is on Express Happiness to take care of, according to the Error Handling Configuration File.
 
 <h3>Predefined Errors</h3>
-Express Happiness comes with a series of error types predefined.
+Express Happiness comes with a series of error types predefined. These are:
+<ul>
+<li><b>undefinedError</b> It's triggered for errors that don't belong to any of the defined errors. It's default configuration
+is: <br/>
+<p>Code Snippet 11.1. <b>Default undefinedError configuration</b></p>
+<pre language="javascript"><code>
+{
+    log:true,
+    humanReadable: 'Unresolved error code',
+    sendToClient: {
+        code:500
+    }
+}
+</code></pre>
+</li>
+
+<li><b>invalidAttrs</b> It's triggered on parameters validation failure. It's default configuration
+is: <br/>
+<p>Code Snippet 11.2. <b>Default invalidAttrs configuration</b></p>
+<pre language="javascript"><code>
+{
+    log:true,
+    humanReadable: 'Invalid attributes passed',
+    sendToClient: {
+        code:400,
+        data:'err.details'
+    }
+}
+</code></pre>
+</li>
+
+<li><b>404</b> It's triggered whenever a route does not exist. It's default configuration
+is: <br/>
+<p>Code Snippet 11.3. <b>Default 404 configuration</b></p>
+<pre language="javascript"><code>
+{
+    log:false,
+    humanReadable: 'The requested resource does not exist',
+    sendToClient: {
+        code:404
+    }
+}
+</code></pre>
+</li>
+
+<li><b>noMockData</b> It's triggered whenever a route that is defined to server mock data, does not have any mock data file.
+It's default configuration
+is: <br/>
+<p>Code Snippet 11.4. <b>Default noMockData configuration</b></p>
+<pre language="javascript"><code>
+{
+    log: true,
+    humanReadable: 'There is no mock data available for this route yet',
+    sendToClient: {
+        code: 404,
+        data:'There is no mock data available for this route yet'
+    }
+}
+</code></pre>
+</li>
+
+<li><b>underDevelopment</b> It's triggered in cases there's no controller function defined for a specific route.
+It's default configuration is:<br/>
+<p>Code Snippet 11.5. <b>Default underDevelopment configuration</b></p>
+<pre language="javascript"><code>
+{
+    log: false,
+    humanReadable: 'A call to a route under development has been made',
+    sendToClient:{
+        code:501,
+        data:'This route is currently under development'
+}
+</code></pre>
+</li>
+</ul>
 
 <h3>error.log file</h3>
 
