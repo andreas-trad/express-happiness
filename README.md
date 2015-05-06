@@ -80,7 +80,7 @@ param: {
 Not all of these characteristics are mandatory nor are they all. For each parameter type, special characteristics apply.
 For example, for type "int", the definition object of the param may (optionally) include "min" and "max" keys, etc.<br/>
 <br/><b>The list of the supported parameter types is:</b>
-<p>Table 1 <b>Supported parameter types</b></p>
+<p>Table 1. <b>Supported parameter types</b></p>
 <table>
 <tr>
 <td>int</td>
@@ -117,7 +117,7 @@ For example, for type "int", the definition object of the param may (optionally)
 </table>
 
 <b>The full list of the supported attributes for each param are listed below:</b>
-<p>Table 2 <b>Supported param attrs</b></p>
+<p>Table 2. <b>Supported param attrs</b></p>
 <table>
 <thead>
 <tr>
@@ -225,7 +225,7 @@ supported keys of this object are listed on the very next table that follows.</t
 </table>
 
 <b>The supported keys of the validationFailureTexts are:</b>
-<p>Table 3 <b>validationFailureTexts supported attributes</b></p>
+<p>Table 3. <b>validationFailureTexts supported attributes</b></p>
 <table>
 <thead>
 <tr>
@@ -476,7 +476,7 @@ A branch can have sub-branches and leafs. A leaf cannot have neither sub-branche
 Within the "subRoutes" parameter of any path we can only define paths.<br/>
 On any endpoint we can define the fields that we're expecting.<br/>
 Here's a table with all the supported attributes of each element:
-<p>Table 4 <b>Path's supported attributes</b></p>
+<p>Table 4. <b>Path's supported attributes</b></p>
 <table>
 <thead>
 <tr>
@@ -501,7 +501,7 @@ the characteristics of the specific endpoint</td>
 </tbody>
 </table>
 
-<p>Table 5 <b>Endpoints's supported attributes</b></p>
+<p>Table 5. <b>Endpoints's supported attributes</b></p>
 <table>
 <thead>
 <tr>
@@ -603,15 +603,36 @@ As you can see, on the GET "/a/b" endpoint we have defined three fields:
 <ul>
 <li><b>by loading the "id" field.</b> The resulting field is identical as the definition of the field on the Reusable Params File (code snippet 3)</li>
 <li><b>by loading the "category" field and passing second argument on getField.</b> The "getField" method of FieldsLoader takes a second optional
-attribute. This attribute is an object. All own keys of this object that are supported by the supported params attrs (table 2) will overwrite the
+attribute. This attribute is an object. All own keys of this object that are included in the supported params attrs list (table 2) will overwrite the
 ones defined on the Reusable Params File.</li>
 <li><b>A totally new parameter.</b> There are cases where a parameter might appear only once and only in one endpoint. In such cases there's
 absolutely no need to define it on the Reusable Params File but, instead, you can define it directly on the "fields" array of the endpoint.</li>
 </ul>
 
 <h3>Dynamic routes</h3>
-A question that arises has to do with the dynamic routes (e.g. "/a/b/:c"). This is
+A question that arises has to do with the dynamic routes (e.g. "/a/b/:c"). This is of course supported by ExpressHappiness
+and you can totally use it on your Routes Tree Configuration File. You can access these fields as you would usually do through
+the <a href="http://expressjs.com/api.html#req" target="_blank">req object</a> of express.</br>
+Here's a simple demonstration on how to define routes including dynamic params:
 
+<p>Code Snippet 8. <b>Dynamic Route Params</b></p>
+<pre lang="javascript"><code>
+module.exports.conf = function(fieldsLoader){ // mind the "fieldsLoader" argument
+    return {
+        routes:{
+            a:{
+                subRoutes: {
+                    ":b": { // check the ":b" on the subRoute key
+                        get: {
+                            // endpoint definition
+                        }
+                    }
+                }
+            }
+        }
+    }
+};
+</code></pre>
 
 
 
