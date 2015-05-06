@@ -522,11 +522,32 @@ the characteristics of the specific endpoint</td>
 auto-generated documentation process. If your endpoint does not expect any parameters or you don't want to apply any
 params validation you can just skip it</td>
 </tr>
+<tr>
+<td>mock</td>
+<td>in cases you want a specific endpoint to serve mock data just put the mock attribute and set it to true</td>
+</tr>
 </tbody>
 </table>
 
+<h3>Groups</h3>
+Both on tables 4 and 5 you might have noticed the "groups" attribute. The "groups" attribute helps us organize / categorize
+all of our endpoints into categories / groups.<br/>
+The grouping mechanism follows a waterfall inheritance mechanism, just like inheritance works on html elements. Every child inherits
+by default the groups of its closest parent. If its closest parent has no group definition then that means it inherits its own
+closest parent's groups etc.<br/>
+For any element in our tree (either endpoint or path), this inheritance goes all the way up until we have an explicit groups definition.<br/>
+So if you have endpoints / routes defined on /admin/* and all belong to a specially restricted area of your application, where
+admin authentication should take place, the only thing you have to do is to define on the /admin path the groups equal to ['admin']. All
+of the child paths and endpoints of it will inherit this groups definition. <br/>
+At any point, at any path or endpoint, you can explicitly define the groups attribute. By this way, any inherited value of the
+attribute "groups" will be ignored and the explicitly defined will prevail.<br/>
+By organizing the endpoints into groups on the Routs Tree Configuration File gives us the opportunity apply middlewares
+specially developed for each of these groups. We'll see more details on this later on.<br/>
+Finally, as you might have noticed, groups is an array. That means that for an endpoint belonging to more than one groups,
+all middlewares of all groups it belongs to will be applied in the sequence the group names have been placed within the array.
 
-
+<h3>Alias</h3>
+The "alias" attribute of each endpoint gives us a way to refer to this endpoint
 
 
 
