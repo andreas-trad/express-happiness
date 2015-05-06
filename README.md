@@ -66,6 +66,7 @@ Each route expects for some params to be passed on call. As mentioned, Express H
 validation mechanism and the only thing you should do is to define the params and the validation rules that apply for
 each route. <br/>
 Each parameter, no matter its type, has the following structure:<br/>
+<p>Code Snippet 1. <b>Parameter's basic structure</b></p>
 <pre lang="javascript"><code>
 param: {
     "key": "the-key-name",
@@ -79,7 +80,7 @@ param: {
 Not all of these characteristics are mandatory nor are they all. For each parameter type, special characteristics apply.
 For example, for type "int", the definition object of the param may (optionally) include "min" and "max" keys, etc.<br/>
 <br/><b>The list of the supported parameter types is:</b>
-<p>Table 1</p>
+<p>Table 1 <b>Supported parameter types</b></p>
 <table>
 <tr>
 <td>int</td>
@@ -116,7 +117,7 @@ For example, for type "int", the definition object of the param may (optionally)
 </table>
 
 <b>The full list of the supported attributes for each param are listed below:</b>
-<p>Table 2</p>
+<p>Table 2 <b>Supported param attrs</b></p>
 <table>
 <thead>
 <tr>
@@ -224,7 +225,7 @@ supported keys of this object are listed on the very next table that follows.</t
 </table>
 
 <b>The supported keys of the validationFailureTexts are:</b>
-<p>Table 3</p>
+<p>Table 3 <b>validationFailureTexts supported attributes</b></p>
 <table>
 <thead>
 <tr>
@@ -277,6 +278,7 @@ supported keys of this object are listed on the very next table that follows.</t
 </table>
 
 So, as an example:
+<p>Code Snippet 2. <b>Parameter's structure including validationFailureTexts object</b></p>
 <pre lang="javascript"><code>
 param: {
     "key": "user_age",
@@ -305,6 +307,7 @@ key holds another object which represents the definition of a parameter. <br/>
 The name of the key is the way you'll refer to the parameter from the Routes Tree Configuration File.<br/>
 So, let's assume that you want to define two reusable parameters on this file, parameter "id" and parameter
 "cat_id". Here's a possible / valid definition of these two params in the Reusable Params File:
+<p>Code Snippet 3. <b>Example of Reusable Params File</b></p>
 <pre lang="javascript"><code>
 module.exports = {
     id:{
@@ -342,6 +345,7 @@ and not only this. You can apply / define validation rules of each of them, no m
 Let's suppose that on a specific call we expect for a parameter with the name "user_data" which will hold the user's information
 in a well defined structure. Both the structure of the expected object and the validation rules that apply to it are made
 obvious through the following parameter definition:
+<p>Code Snippet 4. <b>Example of an object parameter</b></p>
 <pre lang="javascript"><code>
 user:{
     key:'user_data',
@@ -412,6 +416,7 @@ ones.</i>
 All of the supported routes of our application are defined in this very file. <br/>
 In order to be able to reuse the parameters we defined in the Reusable Params File, we need the (built in) FieldsLoader
 module. For this the structure / format of our Routes Tree Configuration File should look like this:
+<p>Code Snippet 5. <b>Basic structure of the Routes Tree Configuration File</b></p>
 <pre lang="javascript"><code>
 module.exports.conf = function(fieldsLoader){
     return {
@@ -430,6 +435,7 @@ there might be the route /a/b and also the route /a/b/c.<br/>
 The way the routes are defined on the Routes Tree Definition File respect both of the above facts. On any given path you
 can separately define the various supported call types and then you can continue deeper defining the supported subroutes of it.<br/>
 In the specific example here's a possible / valid Routes Tree Configuration File:
+<p>Code Snippet 6. <b>Routes Tree Configuration File including paths and endpoints</b></p>
 <pre lang="javascript"><code>
 module.exports.conf = function(fieldsLoader){
     return {
@@ -546,8 +552,65 @@ specially developed for each of these groups. We'll see more details on this lat
 Finally, as you might have noticed, groups is an array. That means that for an endpoint belonging to more than one groups,
 all middlewares of all groups it belongs to will be applied in the sequence the group names have been placed within the array.
 
-<h3>Alias</h3>
-The "alias" attribute of each endpoint gives us a way to refer to this endpoint
+<h3>Alias / Mock operation</h3>
+The "alias" attribute of each endpoint gives us a way to refer to this endpoint from any other part of the Express Happiness
+ecosystem. The most important usage of this "alias" has to do with the mock operation. As mentioned on table 5, along with the
+"alias" attribute each endpoint (optionally, default = false) might have a "mock" attribute set to true. <br/>
+We will analyse mock operation in details in a following part of this document, though keep just one thing in mind for now.
+If any of the endpoints has been set to server mock data then a file containing the mock response should be present somewhere in
+your hard drive. The folder that contains all mock files is defined on ExpressHappiness invocation, though the actual name
+of the file, for each endpoint, should be identical with its alias.
+
+<h3>fields</h3>
+The fields is an array containing all the fields that the specific endpoint supports / expects. As explained, all of the
+fields / params have a very specific definition pattern that has been analyzed on the Reusable Params File section. <br/>
+The fields array might "load" fields from the reusable fields or can either include newly defined params.<br/>
+In order to load a parameter from the params defined on the Reusable Params File you should use the method "getField" of the
+FieldsLoader module that comes with the ExpressHappiness framework. <br/>
+Here is a complete example, using the fields defined on code snippet 3:
+<p>Code Snippet 7. <b>Routes Tree Configuration File example with fields loading</b></p>
+<pre lang="javascript"><code>
+module.exports.conf = function(fieldsLoader){ // mind the "fieldsLoader" argument
+    return {
+        routes:{
+            a:{
+                subRoutes: {
+                    b: {
+                        get: {
+                            alias: 'a_b_get',
+                            description: 'a dummy description of a dummy endpoint',
+                            fields: [
+                                fieldsLoader.getField('id'),
+                                fieldsLoader.getField('category', {
+                                    mandatory:true
+                                }),
+                                {
+                                    key: 'size',
+                                    mandatory: true,
+                                    type: 'numeric'
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+};
+</code></pre>
+
+As you can see, on the GET "/a/b" endpoint we have defined three fields:
+<ul>
+<li><b>by loading the "id" field.</b> The resulting field is identical as the definition of the field on the Reusable Params File (code snippet 3)</li>
+<li><b>by loading the "category" field and passing second argument on getField.</b> The "getField" method of FieldsLoader takes a second optional
+attribute. This attribute is an object. All own keys of this object that are supported by the supported params attrs (table 2) will overwrite the
+ones defined on the Reusable Params File.</li>
+<li><b>A totally new parameter.</b> There are cases where a parameter might appear only once and only in one endpoint. In such cases there's
+absolutely no need to define it on the Reusable Params File but, instead, you can define it directly on the "fields" array of the endpoint.</li>
+</ul>
+
+<h3>Dynamic routes</h3>
+A question that arises has to do with the dynamic routes (e.g. "/a/b/:c"). This is
 
 
 
