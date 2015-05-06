@@ -740,10 +740,17 @@ Fot those who are not that familiar with "next" function, please have a look <a 
 <br/>Once you trigger this event the rest is on Express Happiness to take care of, according to the Error Handling Configuration File.
 
 <h3>Predefined Errors</h3>
-Express Happiness comes with a series of error types predefined. 
+Express Happiness comes with a series of error types predefined.
+
+<h3>error.log file</h3>
+
+<h2>Mock Operation</h2>
 
 
+<h2>Controller Functions</h2>
 
+
+<h2>Fire up your App!</h2>
 
 
 
