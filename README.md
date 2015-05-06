@@ -785,7 +785,7 @@ is: <br/>
 </code></pre>
 </li>
 
-<li><b>noMockData</b> It's triggered whenever a route that is defined to server mock data, does not have any mock data file.
+<li><b>noMockData</b> It's triggered whenever a route that is defined to serve mock data, does not have any mock data file.
 It's default configuration
 is: <br/>
 <p>Code Snippet 11.4. <b>Default noMockData configuration</b></p>
@@ -815,8 +815,17 @@ It's default configuration is:<br/>
 </code></pre>
 </li>
 </ul>
+The default behaviour on any of these errors can be altered by redefining them on the Error Handling Configuration File.
 
 <h3>error.log file</h3>
+As mentioned earlier in this document, Express Happiness logs errors on an error log file. This file is defined on application
+start. Express Happiness does not log all the errors but only those which have log:true on their definition on the Error
+Handling Configuration File.<br/>
+What's been logged on this document, for each error, is:
+<p>Code Snippet 12. <b>Error Line structure logged on the error log file</b></p>
+<pre language="javascript"><code>
+date | error code | route | human readable explanation of the error | error details
+</code></pre>
 
 <h2>Mock Operation</h2>
 
