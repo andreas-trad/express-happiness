@@ -828,12 +828,70 @@ date | error code | route | human readable explanation of the error | error deta
 </code></pre>
 
 <h2>Mock Operation</h2>
+For any endpoint that you define on your Routes Tree Configuration File, you have the chance to put it in mock operation
+status. By "mock operation status" we mean that whenever a user hits the endpoint a static, predefined, mock response will
+be served. <br/>
+In order to do that you need two things:
+<ul>
+<li>Configure the endpoint to serve only mock data</li>
+<li>Create a JSON file and put it in you mock files folder</li>
+</ul>
 
+<h3>How to set mock operation on</h3>
+There are multiple ways to do that. First of all, in order to enable mock operations you have to set the mockData operation
+on during the initialization of your application. We will see more details regarding the initial configuration object
+passed on application start later on, though for now just keep in mind that when we start our application we pass a configuration
+object which on "mockData" key holds an object that defines the folder of your mock files and the flag that set mock operation
+on or off.<br/>
+Having our mock folder defined and set mock operation to on we can force an endpoint to serve mock data by:
+<ul>
+<li>Putting in our mock files folder a file with the name --endpoint-alias--.json, where "--endpoint-alias--" is the alias
+of the endpoint defined on the key "alias" of the endpoint on the Routes Tree Configuration File</li>
+<li>Setting the operation status of the endpoint to mock by setting the "mock" attribute of the endpoint on the Routes Tree
+Configuration File to true</li>
+<li>Or by passing the parameter "mock" equals to 1 during the call</li>
+</ul>
+By this way, whenever you hit the specific endpoint you'll always get back the mock data defined on the specified file on
+the mock files folder.
 
 <h2>Controller Functions</h2>
+Up to now we've seen almost everything regarding the definition process of an endpoint, the params validation and the error
+handling mechanisms but we've said nothing regarding the actual controller function.<br/>
+Assuming that a call passes all the middlewares, all the checks and it's not on mock operation status it reaches to the point
+where something actual needs to take place, a controller function should take care of the call.<br/>
+All controller functions are defined in a single file. As stated in the beginning of this document, the actual aim of this
+architectural decision is not, of course, to pack all the code within this file but more to have one single point where you
+can assign responsibilities and define the controllers of all of your routes in a clean and readable way.<br/>
+This single file is called Controller Functions File and it looks like this:
 
+<p>Code Snippet 12. <b>Example of Controller Functions File</b></p>
+<pre language="javascript"><code>
+var adminFunctions = require('./functions/admin.js');
+var userFunctions = require('./functions/user.js');
 
-<h2>Fire up your App!</h2>
+var functions = [];
+
+functions['route-alias-1'] = adminFunctions.doSomething;
+functions['route-alias-2'] = userFunctions.doSomethingElse;
+
+exports.functions = functions;
+</code></pre>
+It's just a mapping of all controller functions to the routes. As you can see from the example snippet 12, the Controller
+Functions File should export an array. An associative array the keys of which are alias name of each route and the values
+the corresponding controller functions of them. <br/>
+The controller function for each endpoint is in the exact same format as a simple controller function that you would define
+if you used express without Express Happiness. That is:
+<p>Code Snippet 13. <b>Controller Function format</b></p>
+<pre language="javascript"><code>
+var my_controller_function = function(req, res, next){
+    // do your magic here
+}
+</code></pre>
+The third argument (next) is optional though if you want to use the automatic error handling mechanism within these functions
+(that means to create a custom error, trigger it and let the Error Handling mechanism take care of it) you
+certainly need the next function (see code snippet 10).
+
+<h2>Application Configuration on start</h2>
 
 
 
