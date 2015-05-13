@@ -892,14 +892,75 @@ The third argument (next) is optional though if you want to use the automatic er
 certainly need the next function (see code snippet 10).
 
 <h2>Application Configuration on start</h2>
+Having the full of your application configured it's now time to fire it up. Express Happiness starts with the command:
+<p>Code Snippet 15. <b>Starting your Express Happiness Server</b></p>
+<pre language="javascript"><code>
+var app = express();
+var router = express.Router();
+
+var eh = new expressHappiness(app, router, {
+    mockData:{
+        enable: true,
+        folder: '/path/to/mockdatafolder',
+        global: true
+    },
+    reusableFieldsFile: '/path/to/reusableFields.js',
+    errorFile: '/path/to/errors.log',
+    errorsConfigurationFile: '/path/to/conf/errors.js',
+    apiConfigurationFile: 'path/to/conf/restConf.js',
+    controllersFile: '/path/to/controllerFunctions.js'
+});
 
 
+eh.generate('/v1',
+    {
+        'userAccess':[middlewareA, middlewareB],
+        'adminAccess':[middlewareC, middlewareD],
+        'eh-allRoutes':[middlewareX]
+    },
+    {
+        'userAccess':[middlewareA, middlewareB],
+        'adminAccess':[middlewareC, middlewareD],
+        'eh-allRoutes':[middlewareX]
+    }
+);
+</code></pre>
 
+First thing to do is to create a new Express Happiness instance. This is done by calling "new expressHappiness" function.
+This function takes three parameters:
+<ul>
+<li><b>app</b>: the application initialized by the express() function invocation</li>
+<li><b>router</b>: The Router object provided by express which we can get through express.Router() invocation</li>
+<li><b>configuration</b>: a configuration object that sets the full Express Happiness environment up. Here we define the
+path of each file needed by EH and also the mock operation configuration.</li>
+</ul>
 
+After creating the EH instance we call the "generate" function of it. The "generate" function takes three parameters:
+<ul>
+<li><b>route path</b>: this is the base url that our application will support. For example if we are developing a REST
+API that listens to paths under /v1/ then we don't need to define this on the Routes Tree Configuration File. We can
+define it here by passing the '/v1' value on the first argument of the generate function</li>
+<li><b>pre-validation middlewares</b>: On the middlewares chain that are been executed on each call on our application,
+EH always includes a middleware that performs the params validation for the given endpoint. The second argument
+of the "generate" function provides us the ability to define a series of middlewares we want to get executed before reaching
+the params validation step. The middlewares defined here, most often have to do with authentication issues. <br/>
+The way we define our middlewares provides us the ability to explicitly define which middlewares should be executed according
+the group that each route belongs to (see table 5). As mentioned, each endpoint might belong to one or more groups and this
+is defined by the "groups" attribute (which holds an array). So, in our example for all endpoints that belong to the 'userAccess' group
+the middlewareA and middlewareB functions will be executed before the middlewares chain reaches the params validation step. For
+all middlewares that belong to the 'adminAccess' group the middlewareC and middlewareD will be executed before the params
+validation middleware gets execute and so on. <br/>
+If we want to define pre-validation middlewares for all of our endpoints, no matter the groups they belong to, we can use
+the "eh-allRoutes" key to define them. All middlewares included on this array are going to be executed, in the order they
+appear within the array, on all of our endpoints.
+</li>
+<li><b>post-validation middlewares</b>: The exact same things stand here. The third argument of the "generate" function
+expects an object that though its keys defines the middlewares to be executed after the params validation process, on
+our routes, depending on the groups they belong to.
+</li>
+</ul>
 
-
-
-
+The form of our middlewares should be the typical middleware form of express: function(req, res, next). 
 
 
 
