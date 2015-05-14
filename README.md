@@ -960,7 +960,7 @@ our routes, depending on the groups they belong to.
 </li>
 </ul>
 
-The form of our middlewares should be the typical middleware form of express: function(req, res, next). 
+The form of our middlewares should be the typical middleware form of express: function(req, res, next).
 
 
 
