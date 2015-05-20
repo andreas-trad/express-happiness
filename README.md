@@ -59,7 +59,7 @@ will be applied to it. More details about grouping and group-specific middleware
 </ul>
 
 <h2>Starting with it</h2>
-In order to start, you can just clone <a href="#" target="_blank">this repo</a> to your machine or either follow step
+In order to start, you can just clone <a href="https://github.com/andreas-trad/express-happiness-quick-start" target="_blank">this repo</a> to your machine or either follow step
  by step this document.
 <h3>Create your Reusable Params File</h3>
 Each route expects for some params to be passed on call. As mentioned, Express Happiness includes an automatic params
