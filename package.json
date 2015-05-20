@@ -1,16 +1,15 @@
 {
   "name": "express-happiness",
-  "version": "0.0.0",
+  "version": "0.7.0",
   "description": "Express framework wrapper",
   "main": "expressHappiness.js",
-  "scripts": {
-    "test": "echo 'Error: no test specified' && exit 1"
-  },
   "dependencies" : {
     "validator" : "^3.34.0"
   , "colors" : "^1.0.3"
   , "moment" : "^2.9.0"
   , "underscore":"^1.8.2"
+  , "express": "^4.1.1"
+  , "body-parser": "^1.0.2"
   },
   "repository": {
     "type": "git",
