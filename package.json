@@ -1,6 +1,6 @@
 {
   "name": "express-happiness",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Express framework wrapper",
   "main": "expressHappiness.js",
   "dependencies" : {
