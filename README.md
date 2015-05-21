@@ -962,13 +962,10 @@ our routes, depending on the groups they belong to.
 
 The form of our middlewares should be the typical middleware form of express: function(req, res, next).
 
-
-
-
-
-
-
-
+<h2>Auto-generated API documentation</h2>
+After defining all of your endpoints with types and parameters on the root of your application there will be the documentation
+of your API. So, for example, if you run your app on localhost, port 7000, on http://localhost:7000 you'll find an
+auto-generated REST API documentation page.
 
 
 
