@@ -20,6 +20,9 @@ The main features of the framework are the above:
 <li>and many more...</li>
 </ul>
 
+<h2>License</h2>
+Released under the <a href="http://sam.zoy.org/wtfpl/" target="_blank">WTFPL</a> license. Andreas Trantidis <a href="https://twitter.com/AndreasTrantidi" target="_blank">@AndreasTrantidi</a>
+
 <h2>Install</h2>
 <code>
 $ npm install express-happiness
