@@ -1,27 +1,31 @@
-<h1>Express Happiness</h1>
-===========================
+Express Happiness
+=================
 
-<h2>Intro</h2>
-ExpressHappiness is a reach framework for creating web apps and services, built on top of 
-<a href="http://expressjs.com/" target="_blank">express framework</a>.<br/>
-We all use and love express. When it comes to large and complex apps, some times the 
-maintainability of them becomes hard as we keep on adding routes, handle errors and permissions.<br/>
-ExpressHappiness provides a way to develop robust and maintainable apps or REST APIs using express.<br/>
-The main features of the framework are the above:
-<ul>
-<li>the full routes tree is defined in a single object, in a JSON-like manner</li>
-<li>error handling is defined in the exact same manner in a single file. You can either define your own error codes, define the way that they'll be handled on the errors configuration file
- and trigger them any time from any part of your code and letting the framework handle them the way you define</li>
-<li>define permissions to each route by specifying the access group(s) that each route belongs to and define middlewares for groups of routes, not for each route separately</li>
-<li>validate the params of each call by defining their characteristics on the routes definition file</li>
-<li>automatically generate your rest api documentation</li>
-<li>work with mock data, by just putting a file on specific folder and set mock parameter to true on the route's definition</li>
-<li>put function hooks to any error type</li>
-<li>and many more...</li>
-</ul>
+Intro
+-----
+ExpressHappiness is a rich framework for creating web apps and services, built on top of 
+the [Express framework](http://expressjs.com/).
 
-<h2>License</h2>
-Released under the <a href="http://sam.zoy.org/wtfpl/" target="_blank">WTFPL</a> license. Andreas Trantidis <a href="https://twitter.com/AndreasTrantidi" target="_blank">@AndreasTrantidi</a>
+We all use and love Express. When it comes to large and complex apps, some times the 
+maintainability of them becomes hard as we keep on adding routes, handle errors and permissions.
+
+ExpressHappiness provides a way to develop robust and maintainable apps or REST APIs using Express.
+
+The main features of the framework are:
+
+* The full routes tree is defined in a single object, in a JSON-like manner
+* Error handling is defined in the exact same manner in a single file. You can either define your own error codes or define the way that they'll be handled in the errors configuration file and trigger them any time from any part of your code, letting the framework handle them the way you define.
+* Define permissions to each route by specifying the access group(s) that each route belongs to and define middlewares for groups of routes, not for each route separately
+* Validate the params of each call by defining their characteristics on the routes definition file
+* Automatically generate your rest api documentation
+* Work with mock data, by just putting a file in a specific folder and setting the `mock` parameter to true on the route's definition
+* Add function hooks to any error type
+* and many more...
+
+
+License
+-------
+Released under the [WTFPL](http://sam.zoy.org/wtfpl/) license by Andreas Trantidis [@AndreasTrantidi](https://twitter.com/AndreasTrantidi)
 
 
 <h2>Install</h2>
