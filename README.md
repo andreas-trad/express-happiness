@@ -224,6 +224,12 @@ supported keys of this object are listed on the very next table that follows.</t
 <td>oneof</td>
 </tr>
 <tr>
+<td>regexp</td>
+<td>no</td>
+<td>a regular expression to check the provided value against</td>
+<td>string</td>
+</tr>
+<tr>
 <td>keys</td>
 <td>no</td>
 <td>an object that specifies the expected structure of an object type parameter</td>
@@ -281,6 +287,10 @@ supported keys of this object are listed on the very next table that follows.</t
 <tr>
 <td>acceptedValues</td>
 <td>the value of the, of type oneof, field is not present on the acceptedValues array on the field's definition</td>
+</tr>
+<tr>
+<td>regexp</td>
+<td>the string provided does not comply with the regular expression from the regexp property of the field's definition</td>
 </tr>
 </tbody>
 </table>
@@ -877,7 +887,7 @@ This single file is called Controller Functions File and it looks like this:
 var adminFunctions = require('./functions/admin.js');
 var userFunctions = require('./functions/user.js');
 
-var functions = [];
+var functions = {};
 
 functions['route-alias-1'] = adminFunctions.doSomething;
 functions['route-alias-2'] = userFunctions.doSomethingElse;

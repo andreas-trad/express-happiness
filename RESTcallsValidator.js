@@ -19,7 +19,7 @@ var validateEmail = function(email){
 }
 
 var hasTheErrorKey = function(field, errorKey){
-    if(filed.validationFailureTexts != null && field.validationFailureTexts != undefined){
+    if(field.validationFailureTexts != null && field.validationFailureTexts != undefined){
         if(field.validationFailureTexts[errorKey] != null && field.validationFailureTexts[errorKey] != undefined){
             return field.validationFailureTexts[errorKey]
         }
@@ -161,7 +161,7 @@ var unitValidator = {
                 }
             }
         }
-        if(!!filed.regexp){
+        if(!!field.regexp){
             var er_message = hasTheErrorKey(field, 'type');
             try{
                 var passes = field.regexp.test(value);
